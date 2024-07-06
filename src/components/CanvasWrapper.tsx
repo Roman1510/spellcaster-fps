@@ -4,10 +4,11 @@ import { Suspense } from 'react'
 
 import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
+import { Html, useProgress } from '@react-three/drei'
 
 export function CanvasWrapper() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-
+  const { progress } = useProgress()
   return (
     <div className="canvas-wrapper">
       <Canvas
@@ -24,7 +25,13 @@ export function CanvasWrapper() {
           autoClear: true,
         }}
       >
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <Html>
+              <div style={{ color: 'white' }}>Loading...*{progress}*</div>
+            </Html>
+          }
+        >
           <Scene key="scene-game" canvasRef={canvasRef} />
         </Suspense>
       </Canvas>
