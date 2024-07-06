@@ -1,6 +1,11 @@
-import { PointerLockControls } from '@react-three/drei'
+import {
+  Environment,
+  KeyboardControls,
+  PointerLockControls,
+} from '@react-three/drei'
 import { Stage } from './Stage'
 import { MutableRefObject, useRef } from 'react'
+import { keyboardControls } from '../const/keyboardControls'
 
 interface ISceneProps {
   canvasRef: MutableRefObject<HTMLCanvasElement | null>
@@ -14,9 +19,15 @@ export function Scene({ canvasRef }: ISceneProps) {
   return (
     <>
       <>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} />
-        <Stage />
+        <Environment
+          background={false}
+          preset="night"
+          environmentIntensity={0.5}
+        />
+
+        <KeyboardControls map={keyboardControls}>
+          <Stage key="main-stage" />
+        </KeyboardControls>
       </>
       <PointerLockControls
         ref={pointerLockControlsRef}
