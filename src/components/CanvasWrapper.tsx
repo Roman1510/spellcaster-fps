@@ -4,7 +4,6 @@ import { Suspense } from 'react'
 
 import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
-import { OrbitControls } from '@react-three/drei'
 
 export function CanvasWrapper() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -28,7 +27,7 @@ export function CanvasWrapper() {
         <Suspense fallback={null}>
           <Scene key="scene-game" canvasRef={canvasRef} />
         </Suspense>
-        <OrbitControls />
+        {/* <OrbitControls /> */}
       </Canvas>
     </div>
   )

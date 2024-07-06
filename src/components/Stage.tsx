@@ -1,16 +1,12 @@
-import { Box } from '@react-three/drei'
+import { Physics } from '@react-three/rapier'
+import { Ground } from './Ground'
 
 export const Stage = () => {
-  function Model() {
-    return (
-      <Box args={[1, 1, 1]}>
-        <meshNormalMaterial />
-      </Box>
-    )
-  }
   return (
     <>
-      <Model />
+      <Physics gravity={[0, -9.81, 0]}>
+        <Ground />
+      </Physics>
     </>
   )
 }

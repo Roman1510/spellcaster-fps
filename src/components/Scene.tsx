@@ -1,5 +1,6 @@
+import { PointerLockControls } from '@react-three/drei'
 import { Stage } from './Stage'
-import { MutableRefObject } from 'react'
+import { MutableRefObject, useRef } from 'react'
 
 interface ISceneProps {
   canvasRef: MutableRefObject<HTMLCanvasElement | null>
@@ -8,7 +9,7 @@ interface ISceneProps {
 export function Scene({ canvasRef }: ISceneProps) {
   console.log('canvasrerf', canvasRef)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const pointerLockControlsRef = useRef<any>(null)
+  const pointerLockControlsRef = useRef<any>(null)
 
   return (
     <>
@@ -17,12 +18,12 @@ export function Scene({ canvasRef }: ISceneProps) {
         <directionalLight position={[5, 5, 5]} />
         <Stage />
       </>
-      {/* <PointerLockControls
+      <PointerLockControls
         ref={pointerLockControlsRef}
         domElement={canvasRef.current!}
         onLock={() => {}}
         onUnlock={() => {}}
-      /> */}
+      />
     </>
   )
 }
