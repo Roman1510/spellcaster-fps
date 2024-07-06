@@ -19,11 +19,14 @@ export default function ShotCube() {
 
   const position = useMemo(() => new Vector3(), [])
   const direction = useMemo(() => new Vector3(), [])
-
+  const offset = useMemo(() => new Vector3(1, -0.4, 0), [])
   const clickToCreateBox = useCallback(() => {
     if (document.pointerLockElement && camera) {
       camera.getWorldPosition(position)
       camera.getWorldDirection(direction)
+      const projectileStartPosition = position
+        .clone()
+        .add(offset.clone().applyQuaternion(camera.quaternion))
 
       const newMesh = (
         <RigidBody
@@ -35,28 +38,41 @@ export default function ShotCube() {
             }
           }}
         >
-          <mesh
-            position={[
-              position.x + direction.x,
-              position.y + direction.y - 0.5,
-              position.z + direction.z,
-            ]}
-          >
-            <sphereGeometry args={[0.1, 8]} />
-            <meshStandardMaterial color="red" />
-          </mesh>
+          <group>
+            <mesh
+              position={[
+                projectileStartPosition.x,
+                projectileStartPosition.y,
+                projectileStartPosition.z,
+              ]}
+            >
+              <sphereGeometry args={[0.55, 32]} />
+              <meshBasicMaterial color={'white'} transparent opacity={0.1} />
+            </mesh>
+
+            <mesh
+              position={[
+                projectileStartPosition.x,
+                projectileStartPosition.y,
+                projectileStartPosition.z,
+              ]}
+            >
+              <sphereGeometry args={[0.1, 32]} />
+              <meshStandardMaterial color={'red'} />
+            </mesh>
+          </group>
         </RigidBody>
       )
 
       setCubeMeshes((prevMeshes) => [...prevMeshes, newMesh])
     }
-  }, [camera, position, direction, cubeMeshes.length])
+  }, [camera, position, direction, cubeMeshes.length, offset])
 
   useEffect(() => {
     cubeRefs.current.forEach((ref) => {
       if (ref) {
         ref.setLinvel(
-          new Vector3(direction.x * 50, direction.y * 50 + 1, direction.z * 50),
+          new Vector3(direction.x * 165, direction.y * 165, direction.z * 165),
           true
         )
       }
