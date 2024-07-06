@@ -7,6 +7,7 @@ import {
   RigidBody,
 } from '@react-three/rapier'
 import { Vector3, Mesh } from 'three'
+import { Arms } from './Arms'
 
 const direction = new Vector3()
 const frontVector = new Vector3()
@@ -20,7 +21,6 @@ const DASH_SPEED_MULTIPLIER = 35
 
 export function Player() {
   const ref = useRef<RapierRigidBody>(null)
-
   const targetRef = useRef<Mesh>(null)
   const [, get] = useKeyboardControls()
 
@@ -71,7 +71,11 @@ export function Player() {
         position={[0, 3, 0]}
         enabledRotations={[false, false, false]}
       >
-        <CapsuleCollider args={[0.25, 0.9]} />
+        <CapsuleCollider args={[0.25, 0.9]}>
+          <group position={[0, -1.25, -0.11]}>
+            <Arms scale={[0.25, 0.25, 0.25]} rotation={[0, Math.PI, 0]} />
+          </group>
+        </CapsuleCollider>
       </RigidBody>
 
       <mesh ref={targetRef} visible={true}>
