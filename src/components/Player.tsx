@@ -15,8 +15,8 @@ const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
 const MAX_VERTICAL_ANGLE = Math.PI / 7.5
-const BASE_SPEED_MULTIPLIER = 200
-const DASH_SPEED_MULTIPLIER = 400
+const BASE_SPEED_MULTIPLIER = 10
+const DASH_SPEED_MULTIPLIER = 35
 
 export function Player() {
   const ref = useRef<RapierRigidBody>(null)
@@ -53,7 +53,7 @@ export function Player() {
       )
 
       if (targetRef.current) {
-        targetOffset.set(0, 0, -70).applyQuaternion(state.camera.quaternion)
+        targetOffset.set(0, 0, -1).applyQuaternion(state.camera.quaternion)
         targetRef.current.position.copy(state.camera.position).add(targetOffset)
       }
 
@@ -68,14 +68,14 @@ export function Player() {
         colliders={false}
         mass={1}
         type="dynamic"
-        position={[0, 20, 0]}
-        enabledRotations={[false, true, false]}
+        position={[0, 3, 0]}
+        enabledRotations={[false, false, false]}
       >
-        <CapsuleCollider args={[0.75, 1]} />
+        <CapsuleCollider args={[0.25, 0.9]} />
       </RigidBody>
 
-      <mesh ref={targetRef} position={[0, 0, -6]} visible={false}>
-        <boxGeometry args={[1, 1, 1]} />
+      <mesh ref={targetRef} visible={true}>
+        <sphereGeometry args={[0.002, 8]} />
       </mesh>
     </>
   )
