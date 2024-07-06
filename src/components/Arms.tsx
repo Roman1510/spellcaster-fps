@@ -6,8 +6,8 @@ Source: https://sketchfab.com/3d-models/psx-first-person-arms-efd731f559a14ab48e
 Title: PSX First Person Arms
 */
 
-import { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useEffect, useRef } from 'react'
+import { useAnimations, useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import { Bone, Group, MeshStandardMaterial, SkinnedMesh } from 'three'
 
@@ -33,17 +33,30 @@ type GLTFResult = GLTF & {
 //   | 'arms_armature|Magic_spell_loop_start'
 //   | 'arms_armature|Relax_hands_idle_loop'
 //   | 'arms_armature|Relax_hands_idle_start'
-// type GLTFActions = Record<ActionName, THREE.AnimationAction>
 
 export function Arms(props: JSX.IntrinsicElements['group']) {
   const group = useRef<Group>(null)
-  const { nodes, materials } = useGLTF(
+  const { nodes, materials, animations } = useGLTF(
     '/psx_first_person_arms.glb'
   ) as GLTFResult
-  // const { actions } = useAnimations<GLTFActions>(animations, group)
+  const { actions } = useAnimations(animations, group)
+
+  useEffect(() => {
+    const idleAction = actions['arms_armature|Relax_hands_idle_loop']
+    if (idleAction) {
+      idleAction.play()
+    } else {
+      console.error('idle animation error')
+    }
+  }, [actions])
   return (
     <group ref={group} {...props} dispose={null}>
-      <group name="Sketchfab_Scene">
+      <group
+        name="Sketchfab_Scene"
+        rotation={[0, Math.PI, 0]}
+        scale={[0.24, 0.24, 0.24]}
+        position={[0, -1.22, -0.05]}
+      >
         <group
           name="Sketchfab_model"
           rotation={[-Math.PI / 2, 0, 0]}

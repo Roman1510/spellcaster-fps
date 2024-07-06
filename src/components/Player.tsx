@@ -6,7 +6,7 @@ import {
   RapierRigidBody,
   RigidBody,
 } from '@react-three/rapier'
-import { Vector3, Mesh } from 'three'
+import { Vector3, Mesh, Group } from 'three'
 import { Arms } from './Arms'
 
 const direction = new Vector3()
@@ -22,6 +22,7 @@ const DASH_SPEED_MULTIPLIER = 35
 export function Player() {
   const ref = useRef<RapierRigidBody>(null)
   const targetRef = useRef<Mesh>(null)
+  const armsRef = useRef<Group>(null)
   const [, get] = useKeyboardControls()
 
   useFrame((state) => {
@@ -57,6 +58,18 @@ export function Player() {
         targetRef.current.position.copy(state.camera.position).add(targetOffset)
       }
 
+      if (armsRef.current) {
+        const cameraDirection = new Vector3()
+        state.camera.getWorldDirection(cameraDirection)
+        cameraDirection.multiplyScalar(0.1)
+        const armsPosition = new Vector3()
+          .copy(state.camera.position)
+          .add(cameraDirection)
+
+        armsRef.current.position.copy(armsPosition)
+        armsRef.current.quaternion.copy(state.camera.quaternion)
+      }
+
       playerPosition.set(x, y, z)
     }
   })
@@ -71,12 +84,12 @@ export function Player() {
         position={[0, 3, 0]}
         enabledRotations={[false, false, false]}
       >
-        <CapsuleCollider args={[0.25, 0.9]}>
-          <group position={[0, -1.25, -0.11]}>
-            <Arms scale={[0.25, 0.25, 0.25]} rotation={[0, Math.PI, 0]} />
-          </group>
-        </CapsuleCollider>
+        <CapsuleCollider args={[0.25, 0.9]}></CapsuleCollider>
       </RigidBody>
+
+      <group ref={armsRef}>
+        <Arms />
+      </group>
 
       <mesh ref={targetRef} visible={true}>
         <sphereGeometry args={[0.002, 8]} />
