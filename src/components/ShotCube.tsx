@@ -1,3 +1,4 @@
+import { Cloud, Clouds } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { RapierRigidBody, RigidBody } from '@react-three/rapier'
 import {
@@ -8,7 +9,7 @@ import {
   useCallback,
   ReactElement,
 } from 'react'
-import { Vector3 } from 'three'
+import { MeshLambertMaterial, Vector3 } from 'three'
 
 type CubeMesh = ReactElement
 
@@ -31,7 +32,7 @@ export default function ShotCube() {
       const newMesh = (
         <RigidBody
           key={cubeMeshes.length}
-          mass={15}
+          mass={50}
           ref={(ref) => {
             if (ref && !cubeRefs.current.includes(ref)) {
               cubeRefs.current.push(ref)
@@ -39,16 +40,30 @@ export default function ShotCube() {
           }}
         >
           <group>
-            <mesh
+            {/* <mesh
               position={[
                 projectileStartPosition.x,
                 projectileStartPosition.y,
                 projectileStartPosition.z,
               ]}
             >
-              <sphereGeometry args={[0.55, 32]} />
+              <sphereGeometry args={[0.7, 32]} />
               <meshBasicMaterial color={'white'} transparent opacity={0.1} />
-            </mesh>
+            </mesh> */}
+            <Clouds limit={5} material={MeshLambertMaterial}>
+              <Cloud
+                position={[
+                  projectileStartPosition.x,
+                  projectileStartPosition.y,
+                  projectileStartPosition.z,
+                ]}
+                seed={2}
+                concentrate="random"
+                growth={10}
+                color="#ffccdd"
+                bounds={[0.2, 0.2, 0.2]}
+              />
+            </Clouds>
 
             <mesh
               position={[
@@ -57,8 +72,8 @@ export default function ShotCube() {
                 projectileStartPosition.z,
               ]}
             >
-              <sphereGeometry args={[0.1, 32]} />
-              <meshStandardMaterial color={'red'} />
+              <sphereGeometry args={[0.6, 32]} />
+              <meshBasicMaterial transparent opacity={0.03} color={'white'} />
             </mesh>
           </group>
         </RigidBody>

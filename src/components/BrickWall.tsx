@@ -2,9 +2,9 @@ import { RigidBody } from '@react-three/rapier'
 import { Box } from '@react-three/drei'
 
 export const BrickWall = () => {
-  const boxSize = 0.5
+  const boxSize = 1
   const numRows = 10
-  const numColumns = 20
+  const numColumns = 10
 
   const boxes = []
 

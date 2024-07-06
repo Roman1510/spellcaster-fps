@@ -6,7 +6,7 @@ Source: https://sketchfab.com/3d-models/psx-first-person-arms-efd731f559a14ab48e
 Title: PSX First Person Arms
 */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import { Bone, Group, MeshStandardMaterial, SkinnedMesh } from 'three'
@@ -21,19 +21,6 @@ type GLTFResult = GLTF & {
   }
 }
 
-// type ActionName =
-//   | 'arms_armature|Combat_punch_right'
-//   | 'arms_armature|Collect_something'
-//   | 'arms_armature|Combat_idle_loop'
-//   | 'arms_armature|Combat_idle_start'
-//   | 'arms_armature|Combat_punch_left'
-//   | 'arms_armature|Hands_below'
-//   | 'arms_armature|Magic_spell_attack'
-//   | 'arms_armature|Magic_spell_loop'
-//   | 'arms_armature|Magic_spell_loop_start'
-//   | 'arms_armature|Relax_hands_idle_loop'
-//   | 'arms_armature|Relax_hands_idle_start'
-
 export function Arms(props: JSX.IntrinsicElements['group']) {
   const group = useRef<Group>(null)
   const { nodes, materials, animations } = useGLTF(
@@ -41,21 +28,75 @@ export function Arms(props: JSX.IntrinsicElements['group']) {
   ) as GLTFResult
   const { actions } = useAnimations(animations, group)
 
+  // Track mouse state
+  const [isMagicActive, setIsMagicActive] = useState(false)
+
   useEffect(() => {
+    if (!group.current) return
+
     const idleAction = actions['arms_armature|Relax_hands_idle_loop']
-    if (idleAction) {
-      idleAction.play()
-    } else {
-      console.error('idle animation error')
+    const magicSpellAction = actions['arms_armature|Magic_spell_loop']
+
+    if (!idleAction || !magicSpellAction) {
+      console.error('One or more required animations are missing.')
+      return
     }
-  }, [actions])
+
+    // Set initial animation
+    idleAction.play()
+    // magicSpellAction.play().paused = true // Start paused
+
+    // Function to handle animation transitions
+    const handleAnimationTransition = () => {
+      if (isMagicActive) {
+        if (idleAction.isRunning()) {
+          idleAction.fadeOut(0.01) // Fade out idle animation
+        }
+        magicSpellAction.reset().fadeIn(0.001).play() // Play magic spell animation
+      } else {
+        if (magicSpellAction.isRunning()) {
+          magicSpellAction.fadeOut(0.01) // Fade out magic spell animation
+        }
+        idleAction.reset().play() // Play idle animation
+      }
+    }
+
+    // Watch for changes in mouse state
+    handleAnimationTransition()
+  }, [actions, isMagicActive])
+
+  // Handle mouse down and up events
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      if (event.button === 0) {
+        // Left mouse button
+        setIsMagicActive(true)
+      }
+    }
+
+    const handleMouseUp = (event: MouseEvent) => {
+      if (event.button === 0) {
+        // Left mouse button
+        setIsMagicActive(false)
+      }
+    }
+
+    window.addEventListener('mousedown', handleMouseDown)
+    window.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
+
   return (
     <group ref={group} {...props} dispose={null}>
       <group
         name="Sketchfab_Scene"
         rotation={[0, Math.PI, 0]}
-        scale={[0.23, 0.23, 0.23]}
-        position={[0, -1.22, -0.1]}
+        scale={[0.24, 0.24, 0.24]}
+        position={[0, -1.22, 0]}
       >
         <group
           name="Sketchfab_model"
