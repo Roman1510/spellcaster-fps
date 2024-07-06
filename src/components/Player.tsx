@@ -16,8 +16,8 @@ const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
 const MAX_VERTICAL_ANGLE = Math.PI / 7.5
-const BASE_SPEED_MULTIPLIER = 10
-const DASH_SPEED_MULTIPLIER = 35
+const BASE_SPEED_MULTIPLIER = 5
+const DASH_SPEED_MULTIPLIER = 20
 
 export function Player() {
   const ref = useRef<RapierRigidBody>(null)
@@ -84,7 +84,7 @@ export function Player() {
         position={[0, 3, 0]}
         enabledRotations={[false, false, false]}
       >
-        <CapsuleCollider args={[0.25, 0.9]}></CapsuleCollider>
+        <CapsuleCollider args={[0.15, 0.9]}></CapsuleCollider>
       </RigidBody>
 
       <group ref={armsRef}>

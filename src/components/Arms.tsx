@@ -54,8 +54,8 @@ export function Arms(props: JSX.IntrinsicElements['group']) {
       <group
         name="Sketchfab_Scene"
         rotation={[0, Math.PI, 0]}
-        scale={[0.24, 0.24, 0.24]}
-        position={[0, -1.22, -0.05]}
+        scale={[0.23, 0.23, 0.23]}
+        position={[0, -1.22, -0.1]}
       >
         <group
           name="Sketchfab_model"
