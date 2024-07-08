@@ -4,7 +4,7 @@ import {
   PointerLockControls,
 } from '@react-three/drei'
 import { Stage } from './Stage'
-import { MutableRefObject, useRef } from 'react'
+import { MutableRefObject } from 'react'
 import { keyboardControls } from '../const/keyboardControls'
 
 interface ISceneProps {
@@ -12,10 +12,6 @@ interface ISceneProps {
 }
 
 export function Scene({ canvasRef }: ISceneProps) {
-  console.log('canvasrerf', canvasRef)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pointerLockControlsRef = useRef<any>(null)
-
   return (
     <>
       <>
@@ -30,7 +26,6 @@ export function Scene({ canvasRef }: ISceneProps) {
         </KeyboardControls>
       </>
       <PointerLockControls
-        ref={pointerLockControlsRef}
         domElement={canvasRef.current!}
         onLock={() => {}}
         onUnlock={() => {}}
