@@ -18,11 +18,11 @@ export const BrickWall = () => {
         <RigidBody
           key={`${row}-${col}`}
           position={[posX, posY, posZ]}
-          mass={1}
+          mass={20}
           colliders="cuboid"
         >
-          <Box args={[boxSize, boxSize, boxSize]} castShadow>
-            <meshStandardMaterial color="grey" />
+          <Box args={[boxSize, boxSize, boxSize]} castShadow receiveShadow>
+            <meshPhysicalMaterial color="cyan" />
           </Box>
         </RigidBody>
       )

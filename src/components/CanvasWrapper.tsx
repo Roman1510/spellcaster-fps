@@ -12,6 +12,7 @@ export function CanvasWrapper() {
   return (
     <div className="canvas-wrapper">
       <Canvas
+        shadows
         key="canvas-game"
         dpr={1}
         camera={{ fov: 40 }}

@@ -20,10 +20,17 @@ export const Stage = () => {
   return (
     <>
       <directionalLight
-        intensity={1}
+        intensity={5}
         ref={lightRef}
         position={[150, 100, 100]}
         castShadow
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
+        shadow-camera-far={300}
+        shadow-camera-left={-100}
+        shadow-camera-right={50}
+        shadow-camera-top={100}
+        shadow-camera-bottom={-100}
       />
       <Physics gravity={[0, -10, 0]} timeStep="vary">
         <Player />

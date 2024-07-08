@@ -32,7 +32,7 @@ export default function ShotCube() {
       const newMesh = (
         <RigidBody
           key={cubeMeshes.length}
-          mass={50}
+          mass={150}
           ref={(ref) => {
             if (ref && !cubeRefs.current.includes(ref)) {
               cubeRefs.current.push(ref)
@@ -60,7 +60,7 @@ export default function ShotCube() {
                 seed={2}
                 concentrate="random"
                 growth={10}
-                color="#ffccdd"
+                color="#cc99ff"
                 bounds={[0.2, 0.2, 0.2]}
               />
             </Clouds>
@@ -73,7 +73,12 @@ export default function ShotCube() {
               ]}
             >
               <sphereGeometry args={[0.6, 32]} />
-              <meshBasicMaterial transparent opacity={0.03} color={'white'} />
+              <meshBasicMaterial
+                wireframe
+                transparent
+                opacity={0.01}
+                color={'black'}
+              />
             </mesh>
           </group>
         </RigidBody>
