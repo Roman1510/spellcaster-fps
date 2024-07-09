@@ -2,13 +2,13 @@ import {
   Environment,
   KeyboardControls,
   PointerLockControls,
-} from '@react-three/drei'
-import { Stage } from './Stage'
-import { MutableRefObject } from 'react'
-import { keyboardControls } from '../const/keyboardControls'
+} from '@react-three/drei';
+import { Stage } from './Stage';
+import { MutableRefObject } from 'react';
+import { keyboardControls } from '../const/keyboardControls';
 
 interface ISceneProps {
-  canvasRef: MutableRefObject<HTMLCanvasElement | null>
+  canvasRef: MutableRefObject<HTMLCanvasElement | null>;
 }
 
 export function Scene({ canvasRef }: ISceneProps) {
@@ -17,7 +17,7 @@ export function Scene({ canvasRef }: ISceneProps) {
       <>
         <Environment
           background={false}
-          preset="night"
+          preset="forest"
           environmentIntensity={0.5}
         />
 
@@ -31,5 +31,5 @@ export function Scene({ canvasRef }: ISceneProps) {
         onUnlock={() => {}}
       />
     </>
-  )
+  );
 }

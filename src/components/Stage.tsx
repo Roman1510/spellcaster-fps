@@ -1,21 +1,25 @@
-import React, { useRef } from 'react'
-import { Physics } from '@react-three/rapier'
-import { Ground } from './Ground'
-import { Player } from './Player'
-import { BrickWall } from './BrickWall'
-import { DirectionalLight, DirectionalLightHelper } from 'three'
-import { useHelper } from '@react-three/drei'
-import ShotCube from './ShotCube'
+import React, { useRef } from 'react';
+import { Physics } from '@react-three/rapier';
+import { Ground } from './Ground';
+import { Player } from './Player';
+import { BrickWall } from './BrickWall';
+import {
+  DirectionalLight,
+  DirectionalLightHelper,
+  DirectionalLightShadow,
+} from 'three';
+import { useHelper } from '@react-three/drei';
+import ShotCube from './ShotCube';
 
 export const Stage = () => {
-  const lightRef = useRef<DirectionalLight>(null!)
+  const lightRef = useRef<DirectionalLight>(null!);
 
   useHelper(
     lightRef as React.MutableRefObject<DirectionalLight>,
     DirectionalLightHelper,
     5,
     'yellow'
-  )
+  );
 
   return (
     <>
@@ -24,13 +28,14 @@ export const Stage = () => {
         ref={lightRef}
         position={[150, 100, 100]}
         castShadow
-        shadow-mapSize-width={512}
-        shadow-mapSize-height={512}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
         shadow-camera-far={300}
         shadow-camera-left={-100}
         shadow-camera-right={50}
         shadow-camera-top={100}
         shadow-camera-bottom={-100}
+        shadow-radius={10}
       />
       <Physics gravity={[0, -10, 0]} timeStep="vary">
         <Player />
@@ -39,7 +44,7 @@ export const Stage = () => {
         <ShotCube />
       </Physics>
     </>
-  )
-}
+  );
+};
 
-export default Stage
+export default Stage;
