@@ -3,11 +3,7 @@ import { Physics } from '@react-three/rapier';
 import { Ground } from './Ground';
 import { Player } from './Player';
 import { BrickWall } from './BrickWall';
-import {
-  DirectionalLight,
-  DirectionalLightHelper,
-  DirectionalLightShadow,
-} from 'three';
+import { DirectionalLight, DirectionalLightHelper } from 'three';
 import { useHelper } from '@react-three/drei';
 import ShotCube from './ShotCube';
 
@@ -35,7 +31,7 @@ export const Stage = () => {
         shadow-camera-right={50}
         shadow-camera-top={100}
         shadow-camera-bottom={-100}
-        shadow-radius={10}
+        shadow-radius={15}
       />
       <Physics gravity={[0, -10, 0]} timeStep="vary">
         <Player />
