@@ -9,7 +9,7 @@ import {
   useCallback,
   ReactElement,
 } from 'react'
-import { MeshLambertMaterial, Vector3 } from 'three'
+import { Vector3 } from 'three'
 
 type CubeMesh = ReactElement
 
@@ -39,38 +39,16 @@ export default function ShotCube() {
             }
           }}
         >
-          <group>
-            <Clouds limit={5} material={MeshLambertMaterial}>
-              <Cloud
-                position={[
-                  projectileStartPosition.x,
-                  projectileStartPosition.y,
-                  projectileStartPosition.z,
-                ]}
-                seed={2}
-                concentrate="random"
-                growth={10}
-                color="#cc99ff"
-                bounds={[0.2, 0.2, 0.2]}
-              />
-            </Clouds>
-
-            <mesh
-              position={[
-                projectileStartPosition.x,
-                projectileStartPosition.y,
-                projectileStartPosition.z,
-              ]}
-            >
-              <sphereGeometry args={[0.3, 32]} />
-              <meshBasicMaterial
-                wireframe
-                transparent
-                opacity={0.01}
-                color={'black'}
-              />
-            </mesh>
-          </group>
+          <mesh
+            position={[
+              projectileStartPosition.x,
+              projectileStartPosition.y,
+              projectileStartPosition.z,
+            ]}
+          >
+            <sphereGeometry args={[0.1, 32]} />
+            <meshBasicMaterial opacity={0.5} color={'white'} />
+          </mesh>
         </RigidBody>
       )
 
