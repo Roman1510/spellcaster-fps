@@ -15,7 +15,7 @@ const sideVector = new Vector3()
 const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
-const MAX_VERTICAL_ANGLE = Math.PI / 7.5
+const MAX_VERTICAL_ANGLE = Math.PI / 3
 const BASE_SPEED_MULTIPLIER = 5
 const DASH_SPEED_MULTIPLIER = 20
 
