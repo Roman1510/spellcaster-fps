@@ -15,7 +15,6 @@ const sideVector = new Vector3()
 const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
-const MAX_VERTICAL_ANGLE = Math.PI / 3
 const BASE_SPEED_MULTIPLIER = 5
 const DASH_SPEED_MULTIPLIER = 20
 
@@ -30,14 +29,6 @@ export function Player() {
       const { forward, backward, left, right, dash } = get()
       const velocity = ref.current.linvel()
 
-      state.camera.rotation.order = 'YXZ'
-      const cameraRotation = state.camera.rotation.x
-      if (cameraRotation > MAX_VERTICAL_ANGLE) {
-        state.camera.rotation.x = MAX_VERTICAL_ANGLE
-      } else if (cameraRotation < -MAX_VERTICAL_ANGLE) {
-        state.camera.rotation.x = -MAX_VERTICAL_ANGLE
-      }
-
       const { x, y, z } = ref.current.translation()
       state.camera.position.set(x, y, z)
 
@@ -50,7 +41,7 @@ export function Player() {
         .applyQuaternion(state.camera.quaternion)
       ref.current.setLinvel(
         { x: direction.x, y: velocity.y, z: direction.z },
-        true
+        false
       )
 
       if (targetRef.current) {

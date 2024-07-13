@@ -20,7 +20,7 @@ export default function ShotCube() {
 
   const position = useMemo(() => new Vector3(), [])
   const direction = useMemo(() => new Vector3(), [])
-  const offset = useMemo(() => new Vector3(1, -0.4, 0), [])
+  const offset = useMemo(() => new Vector3(1, -0.2, 0), [])
   const clickToCreateBox = useCallback(() => {
     if (document.pointerLockElement && camera) {
       camera.getWorldPosition(position)
@@ -40,16 +40,6 @@ export default function ShotCube() {
           }}
         >
           <group>
-            {/* <mesh
-              position={[
-                projectileStartPosition.x,
-                projectileStartPosition.y,
-                projectileStartPosition.z,
-              ]}
-            >
-              <sphereGeometry args={[0.7, 32]} />
-              <meshBasicMaterial color={'white'} transparent opacity={0.1} />
-            </mesh> */}
             <Clouds limit={5} material={MeshLambertMaterial}>
               <Cloud
                 position={[
@@ -72,7 +62,7 @@ export default function ShotCube() {
                 projectileStartPosition.z,
               ]}
             >
-              <sphereGeometry args={[0.6, 32]} />
+              <sphereGeometry args={[0.3, 32]} />
               <meshBasicMaterial
                 wireframe
                 transparent
