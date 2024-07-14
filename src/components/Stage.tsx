@@ -1,21 +1,21 @@
-import React, { useRef } from 'react';
-import { Physics } from '@react-three/rapier';
-import { Ground } from './Ground';
-import { Player } from './Player';
-import { BrickWall } from './BrickWall';
-import { DirectionalLight, DirectionalLightHelper } from 'three';
-import { useHelper } from '@react-three/drei';
-import ShotCube from './ShotCube';
+import React, { useRef } from 'react'
+import { Physics } from '@react-three/rapier'
+import { Ground } from './Ground'
+import { Player } from './Player'
+import { BrickWall } from './BrickWall'
+import { DirectionalLight, DirectionalLightHelper } from 'three'
+import { useHelper } from '@react-three/drei'
+import { Projectile } from './Projectile'
 
 export const Stage = () => {
-  const lightRef = useRef<DirectionalLight>(null!);
+  const lightRef = useRef<DirectionalLight>(null!)
 
   useHelper(
     lightRef as React.MutableRefObject<DirectionalLight>,
     DirectionalLightHelper,
     5,
     'yellow'
-  );
+  )
 
   return (
     <>
@@ -37,10 +37,10 @@ export const Stage = () => {
         <Player />
         <Ground />
         <BrickWall />
-        <ShotCube />
+        <Projectile />
       </Physics>
     </>
-  );
-};
+  )
+}
 
-export default Stage;
+export default Stage

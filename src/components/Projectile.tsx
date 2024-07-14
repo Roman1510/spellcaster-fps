@@ -1,4 +1,3 @@
-import { Cloud, Clouds } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { RapierRigidBody, RigidBody } from '@react-three/rapier'
 import {
@@ -13,31 +12,36 @@ import { Vector3 } from 'three'
 
 type CubeMesh = ReactElement
 
-export default function ShotCube() {
+export const Projectile = () => {
   const { camera } = useThree()
-  const [cubeMeshes, setCubeMeshes] = useState<CubeMesh[]>([])
+  const [projectiles, setProjectiles] = useState<CubeMesh[]>([])
   const cubeRefs = useRef<RapierRigidBody[]>([])
 
   const position = useMemo(() => new Vector3(), [])
   const direction = useMemo(() => new Vector3(), [])
-  const offset = useMemo(() => new Vector3(1, -0.2, 0), [])
+  const offset = useMemo(() => new Vector3(0.3, 0, -1.5), [])
+
   const clickToCreateBox = useCallback(() => {
     if (document.pointerLockElement && camera) {
       camera.getWorldPosition(position)
       camera.getWorldDirection(direction)
+
+      direction.normalize()
+
       const projectileStartPosition = position
         .clone()
         .add(offset.clone().applyQuaternion(camera.quaternion))
 
       const newMesh = (
         <RigidBody
-          key={cubeMeshes.length}
-          mass={150}
+          key={projectiles.length}
+          mass={100}
           ref={(ref) => {
             if (ref && !cubeRefs.current.includes(ref)) {
               cubeRefs.current.push(ref)
             }
           }}
+          friction={1}
         >
           <mesh
             position={[
@@ -46,15 +50,15 @@ export default function ShotCube() {
               projectileStartPosition.z,
             ]}
           >
-            <sphereGeometry args={[0.1, 32]} />
-            <meshBasicMaterial opacity={0.5} color={'white'} />
+            <sphereGeometry args={[0.4, 32]} />
+            <meshBasicMaterial opacity={0} color={'white'} />
           </mesh>
         </RigidBody>
       )
 
-      setCubeMeshes((prevMeshes) => [...prevMeshes, newMesh])
+      setProjectiles((prevMeshes) => [...prevMeshes, newMesh])
     }
-  }, [camera, position, direction, cubeMeshes.length, offset])
+  }, [camera, position, direction, projectiles.length, offset])
 
   useEffect(() => {
     cubeRefs.current.forEach((ref) => {
@@ -65,7 +69,7 @@ export default function ShotCube() {
         )
       }
     })
-  }, [cubeMeshes, direction])
+  }, [projectiles, direction])
 
   useEffect(() => {
     const handleClick = () => clickToCreateBox()
@@ -75,5 +79,5 @@ export default function ShotCube() {
     }
   }, [clickToCreateBox])
 
-  return <>{cubeMeshes}</>
+  return <>{projectiles}</>
 }
