@@ -1,11 +1,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useKeyboardControls } from '@react-three/drei'
-import {
-  CapsuleCollider,
-  RapierRigidBody,
-  RigidBody,
-} from '@react-three/rapier'
+import { RapierRigidBody, RigidBody } from '@react-three/rapier'
 import { Vector3, Mesh, Group } from 'three'
 import { Arms } from './Arms'
 
@@ -27,11 +23,12 @@ export function Player() {
   useFrame((state) => {
     if (ref.current) {
       const { forward, backward, left, right, dash } = get()
+
       const velocity = ref.current.linvel()
 
       const { x, y, z } = ref.current.translation()
-      state.camera.position.set(x, y, z)
 
+      state.camera.position.set(x, y, z)
       frontVector.set(0, 0, +backward - +forward)
       sideVector.set(+left - +right, 0, 0)
       direction
@@ -41,7 +38,7 @@ export function Player() {
         .applyQuaternion(state.camera.quaternion)
       ref.current.setLinvel(
         { x: direction.x, y: velocity.y, z: direction.z },
-        false
+        true
       )
 
       if (targetRef.current) {
@@ -69,14 +66,11 @@ export function Player() {
     <>
       <RigidBody
         ref={ref}
-        colliders={false}
+        colliders={'ball'}
         mass={100}
         type="dynamic"
-        position={[0, 1, 0]}
-        enabledRotations={[false, false, false]}
-      >
-        <CapsuleCollider args={[0.15, 0.9]}></CapsuleCollider>
-      </RigidBody>
+        position={[0, 2, 0]}
+      ></RigidBody>
 
       <group ref={armsRef}>
         <Arms />
