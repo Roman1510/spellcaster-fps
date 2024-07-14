@@ -1,9 +1,12 @@
 import { CanvasWrapper } from './components/CanvasWrapper'
+import { GameProvider } from './context/GameProvider'
 
 export default function App() {
   return (
     <>
-      <CanvasWrapper />
+      <GameProvider>
+        <CanvasWrapper />
+      </GameProvider>
     </>
   )
 }
