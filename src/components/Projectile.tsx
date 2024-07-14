@@ -12,20 +12,32 @@ import { Vector3 } from 'three'
 
 type CubeMesh = ReactElement
 
+interface ProjectileData {
+  mesh: CubeMesh
+  direction: Vector3
+}
+
 export const Projectile = () => {
   const { camera } = useThree()
-  const [projectiles, setProjectiles] = useState<CubeMesh[]>([])
+  const [projectiles, setProjectiles] = useState<ProjectileData[]>([])
   const cubeRefs = useRef<RapierRigidBody[]>([])
 
   const position = useMemo(() => new Vector3(), [])
   const direction = useMemo(() => new Vector3(), [])
-  const offset = useMemo(() => new Vector3(0.3, 0, -1.5), [])
+  const offset = useMemo(() => new Vector3(0.5, -0.1, -1.5), [])
+
+  const addRandomness = (vec: Vector3, magnitude: number) => {
+    vec.x += (Math.random() - 0.5) * magnitude
+    vec.y += (Math.random() - 0.5) * magnitude
+    vec.z += (Math.random() - 0.5) * magnitude
+  }
 
   const clickToCreateBox = useCallback(() => {
     if (document.pointerLockElement && camera) {
       camera.getWorldPosition(position)
       camera.getWorldDirection(direction)
 
+      addRandomness(direction, 0.05)
       direction.normalize()
 
       const projectileStartPosition = position
@@ -56,20 +68,22 @@ export const Projectile = () => {
         </RigidBody>
       )
 
-      setProjectiles((prevMeshes) => [...prevMeshes, newMesh])
+      setProjectiles((prevMeshes) => [
+        ...prevMeshes,
+        { mesh: newMesh, direction: direction.clone() },
+      ])
     }
   }, [camera, position, direction, projectiles.length, offset])
 
   useEffect(() => {
-    cubeRefs.current.forEach((ref) => {
+    projectiles.forEach((projectile, index) => {
+      const ref = cubeRefs.current[index]
       if (ref) {
-        ref.setLinvel(
-          new Vector3(direction.x * 165, direction.y * 165, direction.z * 165),
-          true
-        )
+        const dir = projectile.direction
+        ref.setLinvel(new Vector3(dir.x * 165, dir.y * 165, dir.z * 165), true)
       }
     })
-  }, [projectiles, direction])
+  }, [projectiles])
 
   useEffect(() => {
     const handleClick = () => clickToCreateBox()
@@ -79,5 +93,5 @@ export const Projectile = () => {
     }
   }, [clickToCreateBox])
 
-  return <>{projectiles}</>
+  return <>{projectiles.map((proj) => proj.mesh)}</>
 }
