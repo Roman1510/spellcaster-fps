@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { useKeyboardControls } from '@react-three/drei'
-import { MutableRefObject } from 'react'
+import { useEffect, MutableRefObject } from 'react'
 import { Vector3, Mesh, Group } from 'three'
 import { RapierRigidBody } from '@react-three/rapier'
 
@@ -11,7 +11,8 @@ const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
 const BASE_SPEED_MULTIPLIER = 5
-const DASH_SPEED_MULTIPLIER = 20
+const DASH_SPEED_MULTIPLIER = 10
+const JUMP_VELOCITY = 6.5
 
 export const usePlayerControl = (
   ref: MutableRefObject<RapierRigidBody | null>,
@@ -20,9 +21,24 @@ export const usePlayerControl = (
 ) => {
   const [, get] = useKeyboardControls()
 
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      if (event.button === 0) {
+        console.log('Left mouse button clicked')
+      } else if (event.button === 2) {
+        console.log('Right mouse button clicked')
+      }
+    }
+
+    window.addEventListener('mousedown', handleMouseDown)
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown)
+    }
+  }, [])
+
   useFrame((state) => {
     if (ref.current) {
-      const { forward, backward, left, right, dash } = get()
+      const { forward, backward, left, right, dash, jump } = get()
 
       const velocity = ref.current.linvel()
       const { x, y, z } = ref.current.translation()
@@ -35,8 +51,12 @@ export const usePlayerControl = (
         .normalize()
         .multiplyScalar(dash ? DASH_SPEED_MULTIPLIER : BASE_SPEED_MULTIPLIER)
         .applyQuaternion(state.camera.quaternion)
+
+      const isGrounded = y <= 1.1
+      const yVelocity = jump && isGrounded ? JUMP_VELOCITY : velocity.y
+
       ref.current.setLinvel(
-        { x: direction.x, y: velocity.y, z: direction.z },
+        { x: direction.x, y: yVelocity, z: direction.z },
         true
       )
 

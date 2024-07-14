@@ -3,6 +3,7 @@ export const keyboardControls = [
   { name: 'backward', keys: ['ArrowDown', 's', 'S'] },
   { name: 'left', keys: ['ArrowLeft', 'a', 'A'] },
   { name: 'right', keys: ['ArrowRight', 'd', 'D'] },
-  { name: 'dash', keys: ['Space'] },
+  { name: 'dash', keys: ['Shift'] },
   { name: 'take', keys: ['E', 'e'] },
-];
+  { name: 'jump', keys: ['Space'] },
+]
