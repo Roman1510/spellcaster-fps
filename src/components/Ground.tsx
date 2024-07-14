@@ -1,12 +1,12 @@
 import { useLoader } from '@react-three/fiber'
-import { CuboidCollider, RigidBody } from '@react-three/rapier'
+import { CylinderCollider, RigidBody } from '@react-three/rapier'
 import { RepeatWrapping, TextureLoader } from 'three'
 import { EXRLoader } from 'three/examples/jsm/Addons.js'
 
 export const Ground = () => {
   const texture = useLoader(TextureLoader, '/floor_diff.jpg')
   const roughnessMap = useLoader(TextureLoader, '/floor_rough.jpg')
-  const displacementMap = useLoader(TextureLoader, '/floor_disp.png')
+
   const normalMap = useLoader(EXRLoader, '/floor_norm.exr')
 
   const repeatCount = 128
@@ -17,29 +17,25 @@ export const Ground = () => {
   roughnessMap.wrapS = roughnessMap.wrapT = RepeatWrapping
   roughnessMap.repeat.set(repeatCount, repeatCount)
 
-  displacementMap.wrapS = displacementMap.wrapT = RepeatWrapping
-  displacementMap.repeat.set(repeatCount, repeatCount)
-
   normalMap.wrapS = normalMap.wrapT = RepeatWrapping
   normalMap.repeat.set(repeatCount, repeatCount)
 
   return (
-    <RigidBody type="fixed" colliders={false}>
-      <CuboidCollider position={[0, -0.1, 0]} args={[100, 0.1, 100]}>
+    <RigidBody type="fixed" colliders={false} friction={0.7}>
+      <CylinderCollider position={[0, -0.1, 0]} args={[0.1, 50]}>
         <mesh
           receiveShadow
+          position={[0, 0.1, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
-          position={[0, -0.1, 0]}
         >
-          <planeGeometry args={[200, 200]} />
+          <circleGeometry args={[50, 64]} />
           <meshPhysicalMaterial
             map={texture}
             roughnessMap={roughnessMap}
-            displacementMap={displacementMap}
             normalMap={normalMap}
           />
         </mesh>
-      </CuboidCollider>
+      </CylinderCollider>
     </RigidBody>
   )
 }
