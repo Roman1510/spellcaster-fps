@@ -20,6 +20,7 @@ export const BrickWall = () => {
           position={[posX, posY, posZ]}
           mass={20}
           colliders="cuboid"
+          friction={0.5}
         >
           <Box args={[boxSize, boxSize, boxSize]} castShadow receiveShadow>
             <meshPhysicalMaterial color="cyan" />
