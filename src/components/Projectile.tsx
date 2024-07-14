@@ -24,7 +24,7 @@ export const Projectile = () => {
 
   const position = useMemo(() => new Vector3(), [])
   const direction = useMemo(() => new Vector3(), [])
-  const offset = useMemo(() => new Vector3(0.5, -0.1, -1.6), [])
+  const offset = useMemo(() => new Vector3(0.5, -0.1, -3.6), [])
 
   const addRandomness = (vec: Vector3, magnitude: number) => {
     vec.x += (Math.random() - 0.5) * magnitude
@@ -47,13 +47,13 @@ export const Projectile = () => {
       const newMesh = (
         <RigidBody
           key={projectiles.length}
-          mass={100}
+          mass={50}
           ref={(ref) => {
             if (ref && !cubeRefs.current.includes(ref)) {
               cubeRefs.current.push(ref)
             }
           }}
-          friction={1}
+          friction={0.3}
           colliders="ball"
         >
           <mesh
@@ -64,7 +64,7 @@ export const Projectile = () => {
             ]}
           >
             <sphereGeometry args={[1.5, 32]} />
-            <meshBasicMaterial transparent opacity={0.3} color={'white'} />
+            <meshBasicMaterial transparent opacity={0.01} color={'white'} />
           </mesh>
         </RigidBody>
       )
