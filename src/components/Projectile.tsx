@@ -114,7 +114,7 @@ export const Projectile = () => {
       camera.getWorldPosition(position)
       camera.getWorldDirection(direction)
 
-      addRandomness(direction, 0.015)
+      addRandomness(direction, 0.03)
       direction.normalize()
 
       const projectileStartPosition = position
@@ -133,7 +133,7 @@ export const Projectile = () => {
             attenuation={(t) => t * t}
           >
             <RigidBody
-              mass={12}
+              mass={70}
               position={[
                 projectileStartPosition.x,
                 projectileStartPosition.y,

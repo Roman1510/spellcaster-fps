@@ -18,8 +18,8 @@ export const BrickWall = () => {
         <RigidBody
           key={`${row}-${col}`}
           position={[posX, posY, posZ]}
-          mass={2}
-          gravityScale={0.1}
+          mass={1}
+          gravityScale={0.7}
           colliders="cuboid"
           friction={0.1}
         >
