@@ -36,15 +36,47 @@ export const Projectile = () => {
   const direction = useMemo(() => new Vector3(), [])
   const offset = useMemo(() => new Vector3(0.5, -0.1, -3.6), [])
 
-  // Fire particle geometry for explosions
+  // Smoke lines geometry for explosions
+  const smokeGeometry = useMemo(() => {
+    const geometry = new BufferGeometry()
+    const positions = []
+
+    // Create smoke lines spreading from random points around impact
+    for (let i = 0; i < 15; i++) {
+      const angle1 = ((Math.PI * 2) / 15) * i + (Math.random() - 0.5) * 0.5
+      const angle2 = Math.random() * Math.PI - Math.PI / 2
+
+      // Start from random point around impact (not center)
+      const startRadius = Math.random() * 0.8
+      const startAngle = Math.random() * Math.PI * 2
+      positions.push(
+        Math.cos(startAngle) * startRadius,
+        (Math.random() - 0.5) * 0.6,
+        Math.sin(startAngle) * startRadius
+      )
+
+      // End point spreading outward
+      const length = 3 + Math.random() * 4
+      positions.push(
+        Math.cos(angle1) * Math.cos(angle2) * length,
+        Math.sin(angle2) * length + Math.random() * 2, // Smoke tends to rise
+        Math.sin(angle1) * Math.cos(angle2) * length
+      )
+    }
+
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
+    return geometry
+  }, [])
+
+  // Enhanced fire particle geometry for bigger spread, smaller particles
   const fireParticleGeometry = useMemo(() => {
     const geometry = new BufferGeometry()
     const positions = []
     const colors = []
 
-    // Create random points for fire explosion
-    for (let i = 0; i < 80; i++) {
-      const radius = Math.random() * 4
+    // Create random points for fire explosion with bigger spread
+    for (let i = 0; i < 100; i++) {
+      const radius = Math.random() * 6 // Bigger spread area
       const theta = Math.random() * Math.PI * 2
       const phi = Math.random() * Math.PI
 
@@ -54,15 +86,17 @@ export const Projectile = () => {
         radius * Math.cos(phi)
       )
 
-      // Fire colors: yellow to red gradient
+      // Enhanced fire colors with more variation
       const fireIntensity = Math.random()
       const color = new Color()
-      if (fireIntensity > 0.7) {
-        color.setHSL(0.15, 1, 0.8) // Bright yellow core
-      } else if (fireIntensity > 0.4) {
-        color.setHSL(0.08, 1, 0.6) // Orange
+      if (fireIntensity > 0.8) {
+        color.setHSL(0.18, 1, 0.9) // Bright white-yellow core
+      } else if (fireIntensity > 0.6) {
+        color.setHSL(0.12, 1, 0.8) // Bright yellow
+      } else if (fireIntensity > 0.3) {
+        color.setHSL(0.06, 1, 0.7) // Orange
       } else {
-        color.setHSL(0.02, 1, 0.5) // Red
+        color.setHSL(0.01, 1, 0.6) // Deep red
       }
       colors.push(color.r, color.g, color.b)
     }
@@ -128,9 +162,11 @@ export const Projectile = () => {
           {/* Main projectile with fire trail */}
           <Trail
             width={2}
-            length={8}
+            length={2}
             color={'#ff3300'}
-            attenuation={(t) => t * t}
+            attenuation={(t: number) => {
+              return --t * t * t + 1
+            }}
           >
             <RigidBody
               mass={70}
@@ -142,10 +178,25 @@ export const Projectile = () => {
               ref={(ref) => {
                 if (ref) {
                   projectileRefs.current.set(projectileId, ref)
+                  // Fix collision bug: Apply initial velocity immediately
+                  setTimeout(() => {
+                    const dir = direction.clone()
+                    const velocity = 140
+                    ref.setLinvel(
+                      new Vector3(
+                        dir.x * velocity,
+                        dir.y * velocity,
+                        dir.z * velocity
+                      ),
+                      true
+                    )
+                  }, 10) // Small delay to ensure physics is ready
                 }
               }}
               friction={0.05}
               colliders="ball"
+              linearDamping={0.1}
+              restitution={0.2}
               onCollisionEnter={() => {
                 handleProjectileImpact(projectileId)
               }}
@@ -178,7 +229,7 @@ export const Projectile = () => {
     }
   }, [camera, position, direction, offset, handleProjectileImpact])
 
-  // Apply physics to projectiles
+  // Apply physics to projectiles (backup method)
   useEffect(() => {
     projectiles.forEach((projectile) => {
       const ref = projectileRefs.current.get(projectile.id)
@@ -196,14 +247,14 @@ export const Projectile = () => {
   // Cleanup old projectiles and explosions
   useFrame(() => {
     const now = Date.now()
-    const projectileLifetime = 6000 // 6 seconds
-    const impactDisappearTime = 200 // 0.2 seconds after impact
-    const explosionLifetime = 800 // 0.8 seconds for fire explosion
+    const projectileLifetime = 5000
+    const impactDisappearTime = 170
+    const explosionLifetime = 1200 // 1.2 seconds for slower fade
 
     // Remove old projectiles and impacted projectiles
     setProjectiles((prev) => {
       const newProjectiles = prev.filter((p) => {
-        // Remove if impacted and 0.2 seconds have passed
+        // Remove if impacted and 0.17 seconds have passed
         if (p.impactedAt && now - p.impactedAt > impactDisappearTime) {
           projectileRefs.current.delete(p.id)
           return false
@@ -243,39 +294,55 @@ export const Projectile = () => {
       {/* Render fire explosions */}
       {explosions.map((explosion) => {
         const age = (Date.now() - explosion.createdAt) / 1000 // age in seconds
-        const scale = 1 + age * 3 // expand faster
-        const opacity = Math.max(0, 1 - age * 1.2) // fade faster
+        const scale = 1 + age * 2 // expand
+        const opacity = Math.max(0, 1 - age * 1.4) // fade
 
         return (
           <group key={explosion.id} position={explosion.position}>
             {/* Fire explosion core */}
             <mesh>
-              <sphereGeometry args={[scale * 0.8, 16, 16]} />
+              <sphereGeometry args={[scale * 0.6, 16, 16]} />
               <meshStandardMaterial
-                color={`hsl(${15 + Math.sin(age * 10) * 10}, 100%, ${
-                  70 - age * 30
+                color={`hsl(${30 + Math.sin(age * 15) * 10}, 100%, ${
+                  75 - age * 30
                 }%)`}
                 transparent
                 opacity={opacity * 0.8}
-                emissive={`hsl(${10 + Math.sin(age * 15) * 5}, 100%, ${
-                  40 - age * 20
+                emissive={`hsl(${25 + Math.sin(age * 18) * 8}, 100%, ${
+                  50 - age * 25
                 }%)`}
-                emissiveIntensity={2 - age}
+                emissiveIntensity={2.5 - age * 1.5}
               />
             </mesh>
 
             {/* Outer fire blast */}
             <mesh>
-              <sphereGeometry args={[scale * 1.5, 12, 12]} />
+              <sphereGeometry args={[scale * 1.0, 12, 12]} />
               <meshBasicMaterial
-                color={`hsl(${5 + Math.sin(age * 8) * 8}, 100%, ${
-                  50 - age * 25
+                color={`hsl(${15 + Math.sin(age * 12) * 8}, 100%, ${
+                  60 - age * 30
                 }%)`}
                 transparent
-                opacity={opacity * 0.4}
-                blending={2} // Additive
+                opacity={opacity * 0.5}
+                blending={2}
               />
             </mesh>
+
+            {/* Smoke lines spreading from impact */}
+            <lineSegments
+              geometry={smokeGeometry}
+              scale={[scale, scale, scale]}
+            >
+              <lineBasicMaterial
+                color={`hsl(${25 + Math.sin(age * 8) * 5}, ${40 - age * 30}%, ${
+                  20 + age * 15
+                }%)`}
+                transparent
+                opacity={opacity * 0.7}
+                blending={2}
+                linewidth={2}
+              />
+            </lineSegments>
 
             {/* Fire particles */}
             <points geometry={fireParticleGeometry}>
