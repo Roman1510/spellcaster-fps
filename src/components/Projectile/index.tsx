@@ -1,6 +1,6 @@
-export { ProjectileSystem } from './projectiles/ProjectileSystem'
-export { ProjectileRenderer } from './projectiles/ProjectileRenderer'
-export { ExplosionRenderer } from './projectiles/ExplosionRenderer'
+export { ProjectileSystem } from './ProjectileSystem'
+export { ProjectileRenderer } from './ProjectileRenderer'
+export { ExplosionRenderer } from './ExplosionRenderer'
 
 // Re-export types for convenience
 export type {

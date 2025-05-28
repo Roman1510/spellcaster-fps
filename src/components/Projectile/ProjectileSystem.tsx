@@ -1,12 +1,11 @@
-// components/projectiles/ProjectileSystem.tsx
 import { useCallback } from 'react'
 import { Vector3 } from 'three'
-import { useProjectiles } from '../hooks/use-projectiles'
-import { useExplosions } from '../hooks/use-explosion'
-import { useProjectileInput } from '../hooks/use-projectile-input'
+import { useProjectiles } from './hooks/use-projectiles'
+import { useExplosions } from './hooks/use-explosion'
+import { useProjectileInput } from './hooks/use-projectile-input'
 import { ProjectileRenderer } from './ProjectileRenderer'
 import { ExplosionRenderer } from './ExplosionRenderer'
-import { ProjectileData } from '../types/projectiles'
+import { ProjectileData } from './types/projectiles'
 
 export const ProjectileSystem = () => {
   const {

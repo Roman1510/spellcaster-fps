@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 
-import { ExplosionEffect } from '../types/projectiles'
+import { ExplosionEffect } from './types/projectiles'
 import {
   createFireParticleGeometry,
   createSmokeGeometry,
-} from '../utils/geometries'
-import { calculateExplosionProperties } from '../utils/projectileHelpers'
-import { EXPLOSION_CONFIG } from '../constants/constants'
+} from './utils/geometries'
+import { calculateExplosionProperties } from './utils/projectileHelpers'
+import { EXPLOSION_CONFIG } from './constants/constants'
 
 interface ExplosionRendererProps {
   explosion: ExplosionEffect

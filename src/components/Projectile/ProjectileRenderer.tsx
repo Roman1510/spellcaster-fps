@@ -6,7 +6,7 @@ import {
   TRAIL_CONFIG,
   PROJECTILE_COLORS,
   PHYSICS_DELAY,
-} from '../constants/constants'
+} from './constants/constants'
 
 interface ProjectileRendererProps {
   id: string
