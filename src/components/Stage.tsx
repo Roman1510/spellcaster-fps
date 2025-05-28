@@ -5,7 +5,8 @@ import { Player } from './Player'
 import { BrickWall } from './BrickWall'
 import { DirectionalLight, DirectionalLightHelper } from 'three'
 import { useHelper } from '@react-three/drei'
-import { Projectile } from './Projectile'
+
+import { ProjectileSystem } from './Projectile'
 
 export const Stage = () => {
   const lightRef = useRef<DirectionalLight>(null!)
@@ -37,7 +38,7 @@ export const Stage = () => {
         <Player />
         <Ground />
         <BrickWall />
-        <Projectile />
+        <ProjectileSystem />
       </Physics>
     </>
   )
