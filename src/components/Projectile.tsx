@@ -36,17 +36,14 @@ export const Projectile = () => {
   const direction = useMemo(() => new Vector3(), [])
   const offset = useMemo(() => new Vector3(0.5, -0.1, -3.6), [])
 
-  // Smoke lines geometry for explosions
   const smokeGeometry = useMemo(() => {
     const geometry = new BufferGeometry()
     const positions = []
 
-    // Create smoke lines spreading from random points around impact
     for (let i = 0; i < 15; i++) {
       const angle1 = ((Math.PI * 2) / 15) * i + (Math.random() - 0.5) * 0.5
       const angle2 = Math.random() * Math.PI - Math.PI / 2
 
-      // Start from random point around impact (not center)
       const startRadius = Math.random() * 0.8
       const startAngle = Math.random() * Math.PI * 2
       positions.push(
@@ -55,11 +52,10 @@ export const Projectile = () => {
         Math.sin(startAngle) * startRadius
       )
 
-      // End point spreading outward
       const length = 3 + Math.random() * 4
       positions.push(
         Math.cos(angle1) * Math.cos(angle2) * length,
-        Math.sin(angle2) * length + Math.random() * 2, // Smoke tends to rise
+        Math.sin(angle2) * length + Math.random() * 2,
         Math.sin(angle1) * Math.cos(angle2) * length
       )
     }
@@ -68,15 +64,13 @@ export const Projectile = () => {
     return geometry
   }, [])
 
-  // Enhanced fire particle geometry for bigger spread, smaller particles
   const fireParticleGeometry = useMemo(() => {
     const geometry = new BufferGeometry()
     const positions = []
     const colors = []
 
-    // Create random points for fire explosion with bigger spread
     for (let i = 0; i < 100; i++) {
-      const radius = Math.random() * 6 // Bigger spread area
+      const radius = Math.random() * 6
       const theta = Math.random() * Math.PI * 2
       const phi = Math.random() * Math.PI
 
@@ -86,17 +80,16 @@ export const Projectile = () => {
         radius * Math.cos(phi)
       )
 
-      // Enhanced fire colors with more variation
       const fireIntensity = Math.random()
       const color = new Color()
       if (fireIntensity > 0.8) {
-        color.setHSL(0.18, 1, 0.9) // Bright white-yellow core
+        color.setHSL(0.18, 1, 0.9)
       } else if (fireIntensity > 0.6) {
-        color.setHSL(0.12, 1, 0.8) // Bright yellow
+        color.setHSL(0.12, 1, 0.8)
       } else if (fireIntensity > 0.3) {
-        color.setHSL(0.06, 1, 0.7) // Orange
+        color.setHSL(0.06, 1, 0.7)
       } else {
-        color.setHSL(0.01, 1, 0.6) // Deep red
+        color.setHSL(0.01, 1, 0.6)
       }
       colors.push(color.r, color.g, color.b)
     }
@@ -126,14 +119,12 @@ export const Projectile = () => {
 
   const handleProjectileImpact = useCallback(
     (projectileId: string) => {
-      // Mark projectile as impacted and create explosion
       setProjectiles((prev) =>
         prev.map((p) =>
           p.id === projectileId ? { ...p, impactedAt: Date.now() } : p
         )
       )
 
-      // Create explosion effect
       const rigidBody = projectileRefs.current.get(projectileId)
       const worldPos = rigidBody?.translation()
       if (worldPos) {
@@ -178,7 +169,6 @@ export const Projectile = () => {
               ref={(ref) => {
                 if (ref) {
                   projectileRefs.current.set(projectileId, ref)
-                  // Fix collision bug: Apply initial velocity immediately
                   setTimeout(() => {
                     const dir = direction.clone()
                     const velocity = 140
@@ -190,7 +180,7 @@ export const Projectile = () => {
                       ),
                       true
                     )
-                  }, 10) // Small delay to ensure physics is ready
+                  }, 10) //here i add a delay
                 }
               }}
               friction={0.05}
@@ -249,17 +239,14 @@ export const Projectile = () => {
     const now = Date.now()
     const projectileLifetime = 5000
     const impactDisappearTime = 170
-    const explosionLifetime = 1200 // 1.2 seconds for slower fade
+    const explosionLifetime = 1200
 
-    // Remove old projectiles and impacted projectiles
     setProjectiles((prev) => {
       const newProjectiles = prev.filter((p) => {
-        // Remove if impacted and 0.17 seconds have passed
         if (p.impactedAt && now - p.impactedAt > impactDisappearTime) {
           projectileRefs.current.delete(p.id)
           return false
         }
-        // Remove if lifetime exceeded (for projectiles that never hit anything)
         if (now - p.createdAt > projectileLifetime) {
           projectileRefs.current.delete(p.id)
           return false
@@ -269,7 +256,6 @@ export const Projectile = () => {
       return newProjectiles.length !== prev.length ? newProjectiles : prev
     })
 
-    // Remove old explosions
     setExplosions((prev) => {
       const newExplosions = prev.filter(
         (explosion) => now - explosion.createdAt < explosionLifetime
@@ -293,9 +279,9 @@ export const Projectile = () => {
 
       {/* Render fire explosions */}
       {explosions.map((explosion) => {
-        const age = (Date.now() - explosion.createdAt) / 1000 // age in seconds
-        const scale = 1 + age * 2 // expand
-        const opacity = Math.max(0, 1 - age * 1.4) // fade
+        const age = (Date.now() - explosion.createdAt) / 1000
+        const scale = 1 + age * 2
+        const opacity = Math.max(0, 1 - age * 1.4)
 
         return (
           <group key={explosion.id} position={explosion.position}>
