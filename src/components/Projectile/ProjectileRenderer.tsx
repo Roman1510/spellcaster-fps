@@ -32,6 +32,7 @@ export const ProjectileRenderer = ({
         attenuation={(t: number) => {
           return --t * t * t + 1
         }}
+        interval={3}
       >
         <RigidBody
           mass={PROJECTILE_CONFIG.mass}
