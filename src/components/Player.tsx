@@ -18,7 +18,7 @@ export function Player() {
         colliders={false}
         mass={100}
         type="dynamic"
-        position={[0, 1, 0]}
+        position={[0, 1, 35]}
       >
         <BallCollider args={[1]} />
       </RigidBody>
