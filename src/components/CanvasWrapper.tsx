@@ -1,23 +1,13 @@
 import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
-import { useControls } from 'leva'
 
 import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
 import { Loader } from '@react-three/drei'
-import { Perf } from 'r3f-perf'
 
 export function CanvasWrapper() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-
-  const {
-    showPerf,
-  } = useControls({
-    showPerf: {
-      value: true
-    },
-  }, { collapsed: false })
 
   const canvasStyle: React.CSSProperties = {
     imageRendering: 'pixelated',
@@ -26,7 +16,10 @@ export function CanvasWrapper() {
   }
 
   return (
-    <div className="canvas-wrapper" style={{ overflow: 'hidden', position: 'relative' }}>
+    <div
+      className="canvas-wrapper"
+      style={{ overflow: 'hidden', position: 'relative' }}
+    >
       <div style={canvasStyle}>
         <Canvas
           shadows
@@ -46,10 +39,10 @@ export function CanvasWrapper() {
           <Suspense fallback={null}>
             <Scene key="scene-game" canvasRef={canvasRef} />
           </Suspense>
-          {showPerf && <Perf position={'bottom-left'} />}
         </Canvas>
+        <Loader />
       </div>
-      {(
+      {
         <div
           style={{
             position: 'absolute',
@@ -72,10 +65,10 @@ export function CanvasWrapper() {
               )
             `,
             pointerEvents: 'none',
-            mixBlendMode: 'multiply'
+            mixBlendMode: 'multiply',
           }}
         />
-      )}
+      }
       {/* {vignetteIntensity > 0 && (
         <div
           style={{
@@ -91,7 +84,6 @@ export function CanvasWrapper() {
           }}
         />
       )} */}
-      <Loader />
     </div>
   )
 }

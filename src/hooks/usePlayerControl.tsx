@@ -11,8 +11,8 @@ const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
 const BASE_SPEED_MULTIPLIER = 5
-const DASH_SPEED_MULTIPLIER = 10
-const JUMP_VELOCITY = 6.5
+const DASH_SPEED_MULTIPLIER = 25
+const JUMP_VELOCITY = 25
 
 export const usePlayerControl = (
   ref: MutableRefObject<RapierRigidBody | null>,
@@ -43,6 +43,7 @@ export const usePlayerControl = (
       const velocity = ref.current.linvel()
       const { x, y, z } = ref.current.translation()
       state.camera.position.set(x, y, z)
+      state.camera.updateMatrixWorld(true)
 
       frontVector.set(0, 0, +backward - +forward)
       sideVector.set(+left - +right, 0, 0)
@@ -78,6 +79,7 @@ export const usePlayerControl = (
       }
 
       playerPosition.set(x, y, z)
+      state.camera.updateMatrixWorld()
     }
   })
 }

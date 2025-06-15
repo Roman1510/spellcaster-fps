@@ -5,8 +5,8 @@ import { Player } from './Player'
 import { BrickWall } from './BrickWall'
 import { DirectionalLight, DirectionalLightHelper } from 'three'
 import { useHelper } from '@react-three/drei'
-
 import { ProjectileSystem } from './Projectile'
+import CameraDebug from './CameraDebug'
 
 export const Stage = () => {
   const lightRef = useRef<DirectionalLight>(null!)
@@ -21,24 +21,28 @@ export const Stage = () => {
   return (
     <>
       <directionalLight
-        intensity={5}
         ref={lightRef}
-        position={[150, 100, 100]}
+        position={[0, 300, 0]}
+        target-position={[-10, 0, -50]}
+        intensity={5}
         castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-far={300}
-        shadow-camera-left={-100}
-        shadow-camera-right={50}
-        shadow-camera-top={100}
-        shadow-camera-bottom={-100}
-        shadow-radius={15}
+        shadow-mapSize-width={256}
+        shadow-mapSize-height={256}
+        shadow-camera-far={100}
+        shadow-camera-left={-30}
+        shadow-camera-right={30}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
+        shadow-radius={0}
+        shadow-bias={-0.0001}
+        shadow-normalBias={0.02}
       />
-      <Physics gravity={[0, -10, 0]} timeStep="vary">
+      <Physics gravity={[0, -10, 0]}>
         <Player />
         <Ground />
         <BrickWall />
         <ProjectileSystem />
+        <CameraDebug />
       </Physics>
     </>
   )

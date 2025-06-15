@@ -24,7 +24,6 @@ export const useExplosions = () => {
     setExplosions((prev) => prev.filter((e) => e.id !== explosionId))
   }, [])
 
-  // Cleanup old explosions
   useFrame(() => {
     const now = Date.now()
 

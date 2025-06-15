@@ -35,6 +35,7 @@ export const ProjectileRenderer = ({
         interval={3}
       >
         <RigidBody
+          name="projectile"
           mass={PROJECTILE_CONFIG.mass}
           position={[position.x, position.y, position.z]}
           ref={(ref) => {

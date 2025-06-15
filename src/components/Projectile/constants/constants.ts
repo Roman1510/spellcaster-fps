@@ -3,7 +3,7 @@ import { ProjectileConfig, ExplosionConfig } from '../types/projectiles'
 
 export const PROJECTILE_CONFIG: ProjectileConfig = {
   mass: 70,
-  velocity: 140,
+  velocity: 170,
   friction: 0.05,
   linearDamping: 0.1,
   restitution: 0.2,
@@ -14,9 +14,9 @@ export const PROJECTILE_CONFIG: ProjectileConfig = {
 
 export const EXPLOSION_CONFIG: ExplosionConfig = {
   lifetime: 1200,
-  maxScale: 2,
-  coreSize: 0.6,
-  blastSize: 1.0,
+  maxScale: 4.5,
+  coreSize: 0.9,
+  blastSize: 3.0,
 }
 
 export const CAMERA_OFFSET = new Vector3(0.5, -0.1, -3.6)
@@ -30,9 +30,9 @@ export const TRAIL_CONFIG = {
 export const PROJECTILE_COLORS = {
   main: '#ff4400',
   emissive: '#ff1100',
-  emissiveIntensity: 3,
+  emissiveIntensity: 4,
   opacity: 0.95,
 }
 
 export const RANDOMNESS_MAGNITUDE = 0.03
-export const PHYSICS_DELAY = 10
+export const PHYSICS_DELAY = 5
