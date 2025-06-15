@@ -28,7 +28,7 @@ export const Ground = () => {
           position={[0, 0.1, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
         >
-          <circleGeometry args={[50, 64]} />
+          <circleGeometry args={[150, 64]} />
           <meshPhysicalMaterial
             map={texture}
             roughnessMap={roughnessMap}
