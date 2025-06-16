@@ -78,13 +78,14 @@ export const BrickWall = () => {
         <InstancedRigidBodies
           key={color}
           instances={colorInstances}
-          mass={0.7}
+          mass={0.03}
           gravityScale={0.8}
           colliders="cuboid"
-          friction={0.3}
-          restitution={0.2}
+          friction={0.8}
+          restitution={0.1}
         >
           <instancedMesh
+            frustumCulled={false}
             args={[geometry, materials[color], colorInstances.length]}
           />
         </InstancedRigidBodies>

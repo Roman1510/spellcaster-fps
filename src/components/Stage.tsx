@@ -4,9 +4,9 @@ import { Ground } from './Ground'
 import { Player } from './Player'
 import { BrickWall } from './BrickWall'
 import { DirectionalLight, DirectionalLightHelper } from 'three'
-import { useHelper } from '@react-three/drei'
+import { Box, useHelper } from '@react-three/drei'
 import { ProjectileSystem } from './Projectile'
-import CameraDebug from './CameraDebug'
+// import CameraVectorHelper from './CameraVectorDebugHelper'
 
 export const Stage = () => {
   const lightRef = useRef<DirectionalLight>(null!)
@@ -26,7 +26,6 @@ export const Stage = () => {
         target-position={[-10, 0, -50]}
         intensity={5}
         castShadow
-        shadow-mapSize-width={256}
         shadow-mapSize-height={256}
         shadow-camera-far={100}
         shadow-camera-left={-30}
@@ -40,10 +39,13 @@ export const Stage = () => {
       <Physics gravity={[0, -10, 0]}>
         <Player />
         <Ground />
-        <BrickWall />
+        <group scale={1.5}>
+          <BrickWall />
+        </group>
+        <Box position={[0, 0, -30]} />
         <ProjectileSystem />
-        <CameraDebug />
       </Physics>
+      {/* <CameraVectorHelper /> */}
     </>
   )
 }

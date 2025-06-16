@@ -80,6 +80,10 @@ export function Arms(props: any) {
 
   return (
     <group ref={group} {...props} dispose={null}>
+      <mesh position={[0, 0, -1]}>
+        <boxGeometry args={[0.005, 0.005]} />
+        <meshBasicMaterial color="white" />
+      </mesh>
       <group
         name="Sketchfab_Scene"
         rotation={[0, Math.PI, 0]}

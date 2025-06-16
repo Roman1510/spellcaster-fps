@@ -64,7 +64,7 @@ export const ProjectileRenderer = ({
           }}
         >
           <mesh>
-            <sphereGeometry args={[PROJECTILE_CONFIG.size, 12, 12]} />
+            <sphereGeometry args={[PROJECTILE_CONFIG.size, 10, 10]} />
             <meshStandardMaterial
               color={PROJECTILE_COLORS.main}
               emissive={PROJECTILE_COLORS.emissive}

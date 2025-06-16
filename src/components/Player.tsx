@@ -1,5 +1,9 @@
 import { useRef } from 'react'
-import { BallCollider, RapierRigidBody, RigidBody } from '@react-three/rapier'
+import {
+  CapsuleCollider,
+  RapierRigidBody,
+  RigidBody,
+} from '@react-three/rapier'
 import { Mesh, Group } from 'three'
 import { Arms } from './Arms'
 import { usePlayerControl } from '../hooks/usePlayerControl'
@@ -16,16 +20,20 @@ export function Player() {
       <RigidBody
         ref={ref}
         colliders={false}
-        mass={100}
+        mass={200}
         type="dynamic"
-        position={[0, 1, 35]}
+        position={[0, 2, 35]}
+        enabledRotations={[false, false, false]}
+        lockRotations
       >
-        <BallCollider args={[1]} />
+        <CapsuleCollider args={[0.8, 0.4]} />
       </RigidBody>
+
       <group ref={armsRef}>
         <Arms />
       </group>
-      <mesh ref={targetRef} visible={true}>
+
+      <mesh ref={targetRef} visible={false}>
         <sphereGeometry args={[0.002, 8]} />
       </mesh>
     </>

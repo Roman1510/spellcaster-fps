@@ -16,7 +16,7 @@ export const EXPLOSION_CONFIG: ExplosionConfig = {
   lifetime: 1200,
   maxScale: 4.5,
   coreSize: 0.9,
-  blastSize: 3.0,
+  blastSize: 4.0,
 }
 
 export const CAMERA_OFFSET = new Vector3(0.5, -0.1, -3.6)
