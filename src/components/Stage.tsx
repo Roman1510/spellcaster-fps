@@ -6,7 +6,6 @@ import { BrickWall } from './BrickWall'
 import { DirectionalLight, DirectionalLightHelper } from 'three'
 import { Box, useHelper } from '@react-three/drei'
 import { ProjectileSystem } from './Projectile'
-// import CameraVectorHelper from './CameraVectorDebugHelper'
 
 export const Stage = () => {
   const lightRef = useRef<DirectionalLight>(null!)
@@ -45,7 +44,6 @@ export const Stage = () => {
         <Box position={[0, 0, -30]} />
         <ProjectileSystem />
       </Physics>
-      {/* <CameraVectorHelper /> */}
     </>
   )
 }

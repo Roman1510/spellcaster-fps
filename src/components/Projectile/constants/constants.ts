@@ -2,12 +2,12 @@ import { Vector3 } from 'three'
 import { ProjectileConfig, ExplosionConfig } from '../types/projectiles'
 
 export const PROJECTILE_CONFIG: ProjectileConfig = {
-  mass: 70,
+  mass: 170,
   velocity: 170,
   friction: 0.05,
-  linearDamping: 0.1,
-  restitution: 0.2,
-  size: 0.6,
+  linearDamping: 0.3,
+  restitution: 0.5,
+  size: 1.3,
   lifetime: 5000,
   impactDisappearTime: 170,
 }

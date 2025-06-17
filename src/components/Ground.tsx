@@ -22,7 +22,7 @@ export const Ground = () => {
 
   return (
     <RigidBody type="fixed" colliders={false} friction={0.7}>
-      <CylinderCollider position={[0, -0.1, 0]} args={[0.1, 50]}>
+      <CylinderCollider position={[0, -0.1, 0]} args={[0.1, 150]}>
         <mesh
           receiveShadow
           position={[0, 0.1, 0]}
