@@ -1,8 +1,4 @@
-import {
-  Environment,
-  KeyboardControls,
-  PointerLockControls,
-} from '@react-three/drei'
+import { KeyboardControls, PointerLockControls } from '@react-three/drei'
 import { Stage } from './Stage'
 import { RefObject } from 'react'
 import { keyboardControls } from '../const/keyboardControls'
@@ -25,12 +21,6 @@ export function Scene({ canvasRef }: ISceneProps) {
   return (
     <>
       <>
-        <Environment
-          background={false}
-          preset="forest"
-          environmentIntensity={0.5}
-        />
-
         <KeyboardControls map={keyboardControls}>
           <Stage key="main-stage" />
         </KeyboardControls>

@@ -4,9 +4,10 @@ import { Suspense } from 'react'
 
 import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
-import { useControls } from 'leva'
+
 import { Perf } from 'r3f-perf'
 import { Preload } from '@react-three/drei'
+import { Loader } from './Loader'
 
 export function CanvasWrapper() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -16,9 +17,7 @@ export function CanvasWrapper() {
     width: '100%',
     height: '100%',
   }
-  const { showPerf } = useControls('Performance', {
-    showPerf: { value: false, label: 'Show Performance Stats' },
-  })
+
   return (
     <div
       className="canvas-wrapper"
@@ -32,7 +31,7 @@ export function CanvasWrapper() {
           camera={{ fov: 38 }}
           onCreated={({ scene }) => {
             scene.background = new Color('#000000')
-            scene.fog = new FogExp2('#000000', 0.02)
+            scene.fog = new FogExp2('#000000', 0.006)
           }}
           gl={{
             powerPreference: 'high-performance',
@@ -40,11 +39,11 @@ export function CanvasWrapper() {
             autoClear: true,
           }}
         >
-          <Suspense fallback={null}>
+          <Suspense fallback={<Loader />}>
             <Scene key="scene-game" canvasRef={canvasRef} />
             <Preload all />
+            <Perf position="top-left" />
           </Suspense>
-          {showPerf && <Perf position="top-left" />}
         </Canvas>
       </div>
       {

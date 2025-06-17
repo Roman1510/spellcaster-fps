@@ -3,7 +3,7 @@ import { InstancedRigidBodies } from '@react-three/rapier'
 import * as THREE from 'three'
 
 const colors = [
-  '#FF6B6B',
+  '#12f702',
   '#4ECDC4',
   '#45B7D1',
   '#96CEB4',
@@ -74,6 +74,21 @@ export const BrickWall = () => {
 
   return (
     <>
+      <directionalLight
+        position={[-10, 15, 5]}
+        target-position={[0, 6, -20]}
+        intensity={8}
+        color="#9966CC"
+        castShadow
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
+        shadow-camera-far={25}
+        shadow-camera-left={-8}
+        shadow-camera-right={8}
+        shadow-camera-top={8}
+        shadow-camera-bottom={-2}
+      />
+
       {Object.entries(groupedByColor).map(([color, colorInstances]) => (
         <InstancedRigidBodies
           key={color}
