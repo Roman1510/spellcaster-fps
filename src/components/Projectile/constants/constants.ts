@@ -8,12 +8,12 @@ export const PROJECTILE_CONFIG: ProjectileConfig = {
   linearDamping: 0.3,
   restitution: 0.5,
   size: 1.3,
-  lifetime: 1500,
+  lifetime: 1000,
   impactDisappearTime: 170,
 }
 
 export const EXPLOSION_CONFIG: ExplosionConfig = {
-  lifetime: 1200,
+  lifetime: 800,
   maxScale: 4.5,
   coreSize: 0.9,
   blastSize: 4.0,
@@ -34,5 +34,5 @@ export const PROJECTILE_COLORS = {
   opacity: 0.95,
 }
 
-export const RANDOMNESS_MAGNITUDE = 0.03
-export const PHYSICS_DELAY = 5
+export const RANDOMNESS_MAGNITUDE = 0.035
+export const PHYSICS_DELAY = 7

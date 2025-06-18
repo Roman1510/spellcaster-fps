@@ -19,7 +19,7 @@ export const useProjectileInput = ({
 
   const position = useMemo(() => new Vector3(), [])
   const direction = useMemo(() => new Vector3(), [])
-  const offset = useMemo(() => CAMERA_OFFSET.clone(), [])
+  const offset = useMemo(() => CAMERA_OFFSET, [])
 
   const handleClick = useCallback(() => {
     if (document.pointerLockElement && camera) {

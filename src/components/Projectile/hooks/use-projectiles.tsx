@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RapierRigidBody } from '@react-three/rapier'
-import { Vector3 } from 'three'
+
 import { ProjectileData } from '../types/projectiles'
 import { PROJECTILE_CONFIG } from '../constants/constants'
 
@@ -9,13 +9,14 @@ export const useProjectiles = () => {
   const [projectiles, setProjectiles] = useState<ProjectileData[]>([])
   const projectileRefs = useRef<Map<string, RapierRigidBody>>(new Map())
 
+  const projectilesToRemove = useRef<Set<string>>(new Set())
+
   const addProjectile = useCallback((projectileData: ProjectileData) => {
     setProjectiles((prev) => [...prev, projectileData])
   }, [])
 
   const removeProjectile = useCallback((projectileId: string) => {
-    setProjectiles((prev) => prev.filter((p) => p.id !== projectileId))
-    projectileRefs.current.delete(projectileId)
+    projectilesToRemove.current.add(projectileId)
   }, [])
 
   const markProjectileImpacted = useCallback((projectileId: string) => {
@@ -41,43 +42,41 @@ export const useProjectiles = () => {
     []
   )
 
-  // Apply physics to projectiles
-  useEffect(() => {
-    projectiles.forEach((projectile) => {
-      const ref = projectileRefs.current.get(projectile.id)
-      if (ref) {
-        const dir = projectile.direction
-        const velocity = PROJECTILE_CONFIG.velocity
-        ref.setLinvel(
-          new Vector3(dir.x * velocity, dir.y * velocity, dir.z * velocity),
-          false
-        )
-      }
-    })
-  }, [projectiles])
-
-  // Cleanup old projectiles
   useFrame(() => {
     const now = Date.now()
+    const toRemove = new Set<string>()
 
-    setProjectiles((prev) => {
-      const newProjectiles = prev.filter((p) => {
-        if (
-          p.impactedAt &&
-          now - p.impactedAt > PROJECTILE_CONFIG.impactDisappearTime
-        ) {
-          projectileRefs.current.delete(p.id)
-          return false
-        }
-        if (now - p.createdAt > PROJECTILE_CONFIG.lifetime) {
-          projectileRefs.current.delete(p.id)
-          return false
-        }
-        return true
-      })
-      return newProjectiles.length !== prev.length ? newProjectiles : prev
+    projectiles.forEach((projectile) => {
+      const shouldRemove =
+        (projectile.impactedAt &&
+          now - projectile.impactedAt >
+            PROJECTILE_CONFIG.impactDisappearTime) ||
+        now - projectile.createdAt > PROJECTILE_CONFIG.lifetime
+
+      if (shouldRemove) {
+        toRemove.add(projectile.id)
+      }
     })
+
+    projectilesToRemove.current.forEach((id) => toRemove.add(id))
+
+    if (toRemove.size > 0) {
+      toRemove.forEach((id) => {
+        projectileRefs.current.delete(id)
+      })
+
+      setProjectiles((prev) => prev.filter((p) => !toRemove.has(p.id)))
+
+      projectilesToRemove.current.clear()
+    }
   })
+
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      projectileRefs.current.clear()
+    }
+  }, [])
 
   return {
     projectiles,
