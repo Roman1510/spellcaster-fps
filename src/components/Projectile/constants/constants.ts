@@ -3,12 +3,12 @@ import { ProjectileConfig, ExplosionConfig } from '../types/projectiles'
 
 export const PROJECTILE_CONFIG: ProjectileConfig = {
   mass: 170,
-  velocity: 170,
+  velocity: 200,
   friction: 0.05,
   linearDamping: 0.3,
   restitution: 0.5,
   size: 1.3,
-  lifetime: 5000,
+  lifetime: 1500,
   impactDisappearTime: 170,
 }
 

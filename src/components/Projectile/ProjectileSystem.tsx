@@ -16,7 +16,11 @@ export const ProjectileSystem = () => {
     setProjectileRef,
   } = useProjectiles()
 
-  const { explosions, createExplosion } = useExplosions()
+  const { explosions, createExplosion, registerGeometry } = useExplosions({
+    defaultForce: 20,
+    defaultRadius: 10,
+    maxExplosions: 5,
+  })
 
   const handleProjectileImpact = useCallback(
     (projectileId: string) => {
@@ -24,8 +28,16 @@ export const ProjectileSystem = () => {
 
       const rigidBody = getProjectileRigidBody(projectileId)
       const worldPos = rigidBody?.translation()
+      const velocity = rigidBody?.linvel()
+
       if (worldPos) {
-        createExplosion(new Vector3(worldPos.x, worldPos.y, worldPos.z))
+        createExplosion({
+          position: new Vector3(worldPos.x, worldPos.y, worldPos.z),
+          velocity: velocity
+            ? new Vector3(velocity.x, velocity.y, velocity.z)
+            : undefined,
+          force: 5,
+        })
       }
     },
     [markProjectileImpacted, getProjectileRigidBody, createExplosion]
@@ -70,9 +82,13 @@ export const ProjectileSystem = () => {
       {/* Render projectiles */}
       {projectiles.map((proj) => proj.mesh)}
 
-      {/* Render explosions */}
+      {/* Render explosions - updated to pass registerGeometry */}
       {explosions.map((explosion) => (
-        <ExplosionRenderer key={explosion.id} explosion={explosion} />
+        <ExplosionRenderer
+          key={explosion.id}
+          explosion={explosion}
+          registerGeometry={registerGeometry} // Pass the geometry registration function
+        />
       ))}
     </>
   )
