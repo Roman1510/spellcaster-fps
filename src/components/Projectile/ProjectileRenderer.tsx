@@ -1,12 +1,14 @@
 import { RigidBody, RapierRigidBody } from '@react-three/rapier'
 import { Trail } from '@react-three/drei'
-import { Vector3 } from 'three'
+import { ShaderMaterial, Vector3 } from 'three'
 import {
   PROJECTILE_CONFIG,
   TRAIL_CONFIG,
-  PROJECTILE_COLORS,
   PHYSICS_DELAY,
 } from './constants/constants'
+import { createFireProjectileMaterial } from '../../shaders/fireShaderMaterial'
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 
 interface ProjectileRendererProps {
   id: string
@@ -23,6 +25,12 @@ export const ProjectileRenderer = ({
   onCollision,
   setRef,
 }: ProjectileRendererProps) => {
+  const materialRef = useRef<ShaderMaterial>(createFireProjectileMaterial())
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
+    }
+  })
   return (
     <group key={id}>
       <Trail
@@ -37,6 +45,7 @@ export const ProjectileRenderer = ({
         <RigidBody
           name="projectile"
           mass={PROJECTILE_CONFIG.mass}
+          gravityScale={0.3}
           position={[position.x, position.y, position.z]}
           ref={(ref) => {
             if (ref) {
@@ -64,14 +73,8 @@ export const ProjectileRenderer = ({
           }}
         >
           <mesh>
-            <sphereGeometry args={[PROJECTILE_CONFIG.size, 10, 10]} />
-            <meshStandardMaterial
-              color={PROJECTILE_COLORS.main}
-              emissive={PROJECTILE_COLORS.emissive}
-              emissiveIntensity={PROJECTILE_COLORS.emissiveIntensity}
-              transparent
-              opacity={PROJECTILE_COLORS.opacity}
-            />
+            <dodecahedronGeometry args={[PROJECTILE_CONFIG.size, 1]} />
+            <primitive object={materialRef.current} attach="material" />
           </mesh>
         </RigidBody>
       </Trail>
