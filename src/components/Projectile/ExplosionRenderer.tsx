@@ -150,6 +150,10 @@ export const ExplosionRenderer = ({
       )
     : new Vector3(0, 0, 0)
 
+  if (age > EXPLOSION_CONFIG.lifetime) {
+    return null
+  }
+
   return (
     <group position={explosion.position}>
       {/* Main explosion with shader */}

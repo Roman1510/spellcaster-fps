@@ -13,7 +13,7 @@ export const PROJECTILE_CONFIG: ProjectileConfig = {
 }
 
 export const EXPLOSION_CONFIG: ExplosionConfig = {
-  lifetime: 800,
+  lifetime: 1000,
   maxScale: 4.5,
   coreSize: 0.9,
   blastSize: 4.3,
