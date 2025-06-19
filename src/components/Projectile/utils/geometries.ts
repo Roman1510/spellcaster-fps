@@ -34,7 +34,7 @@ export const createFireParticleGeometry = (): BufferGeometry => {
   const colors = []
 
   for (let i = 0; i < 100; i++) {
-    const radius = Math.random() * 6
+    const radius = Math.random() * 9
     const theta = Math.random() * Math.PI * 2
     const phi = Math.random() * Math.PI
 
@@ -47,13 +47,13 @@ export const createFireParticleGeometry = (): BufferGeometry => {
     const fireIntensity = Math.random()
     const color = new Color()
     if (fireIntensity > 0.8) {
-      color.setHSL(0.18, 1, 0.9)
+      color.setHSL(0.8, 1, 0.9)
     } else if (fireIntensity > 0.6) {
-      color.setHSL(0.12, 1, 0.8)
+      color.setHSL(0.75, 1, 0.8)
     } else if (fireIntensity > 0.3) {
-      color.setHSL(0.06, 1, 0.7)
+      color.setHSL(0.65, 1, 0.7)
     } else {
-      color.setHSL(0.01, 1, 0.6)
+      color.setHSL(0.6, 1, 0.6)
     }
     colors.push(color.r, color.g, color.b)
   }
@@ -72,10 +72,8 @@ export const createCircularFireParticles = (): BufferGeometry => {
   const lifetimes = []
   const chaos = []
 
-  // More particles, more dense
   for (let i = 0; i < 200; i++) {
-    // Denser distribution - smaller initial radius
-    const radius = Math.random() * 3.5 + Math.random() * 2.0 // 0-5.5 range, denser at center
+    const radius = Math.random() * 3.5 + Math.random() * 2.0
     const theta = Math.random() * Math.PI * 2
     const phi = Math.random() * Math.PI
 
@@ -85,8 +83,7 @@ export const createCircularFireParticles = (): BufferGeometry => {
       radius * Math.cos(phi)
     )
 
-    // More chaotic velocity vectors
-    const velocityMagnitude = 2.0 + Math.random() * 4.0 // Faster movement
+    const velocityMagnitude = 2.0 + Math.random() * 4.0
     const velocityTheta = Math.random() * Math.PI * 2
     const velocityPhi = Math.random() * Math.PI
 
@@ -115,14 +112,11 @@ export const createCircularFireParticles = (): BufferGeometry => {
     }
     colors.push(color.r, color.g, color.b)
 
-    // Smaller, more varied sizes
-    sizes.push(0.08 + Math.random() * 0.15) // Smaller: 0.08-0.23 instead of 0.15-0.4
+    sizes.push(0.08 + Math.random() * 0.15)
 
-    // Random lifetime for each particle
-    lifetimes.push(Math.random() * 2.0 + 0.5) // 0.5-2.5 seconds
+    lifetimes.push(Math.random() * 2.0 + 0.5)
 
-    // Chaos factor for each particle
-    chaos.push(Math.random() * 2.0 + 0.5) // Individual chaos multiplier
+    chaos.push(Math.random() * 2.0 + 0.5)
   }
 
   geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))

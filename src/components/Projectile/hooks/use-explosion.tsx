@@ -3,7 +3,6 @@ import { useFrame } from '@react-three/fiber'
 import { BufferGeometry, Vector3 } from 'three'
 import { useRapier } from '@react-three/rapier'
 
-// Enhanced explosion effect interface
 export interface ExplosionEffect {
   id: string
   position: Vector3
@@ -14,7 +13,6 @@ export interface ExplosionEffect {
   disposed?: boolean
 }
 
-// Configuration for explosions
 interface ExplosionConfig {
   defaultForce: number
   defaultRadius: number
@@ -24,14 +22,13 @@ interface ExplosionConfig {
 }
 
 const DEFAULT_EXPLOSION_CONFIG: ExplosionConfig = {
-  defaultForce: 10,
+  defaultForce: 50,
   defaultRadius: 5,
-  lifetime: 1000, // 3 seconds
-  maxExplosions: 10, // Prevent memory bloat
-  cleanupInterval: 50, // Cleanup every 100ms
+  lifetime: 1000,
+  maxExplosions: 5,
+  cleanupInterval: 150,
 }
 
-// Options for creating explosions
 interface CreateExplosionOptions {
   position: Vector3
   velocity?: Vector3
@@ -40,28 +37,23 @@ interface CreateExplosionOptions {
 }
 
 export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
-  // Merge config with defaults
   const explosionConfig = useMemo(
     () => ({ ...DEFAULT_EXPLOSION_CONFIG, ...config }),
     [config]
   )
 
-  // State for explosions
   const [explosions, setExplosions] = useState<ExplosionEffect[]>([])
 
-  // Refs for cleanup and physics
   const { world } = useRapier()
   const geometriesRef = useRef<Map<string, BufferGeometry[]>>(new Map())
   const lastCleanupRef = useRef<number>(Date.now())
   const explosionCountRef = useRef<number>(0)
 
-  // Generate unique explosion ID
   const generateExplosionId = useCallback((): string => {
     explosionCountRef.current += 1
     return `explosion-${Date.now()}-${explosionCountRef.current}`
   }, [])
 
-  // Apply physics explosion force to nearby rigid bodies
   const applyExplosionForce = useCallback(
     (center: Vector3, force: number, radius: number) => {
       if (!world) {
@@ -82,17 +74,12 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
             const bodyPosition = new Vector3(bodyPos.x, bodyPos.y, bodyPos.z)
             const distance = center.distanceTo(bodyPosition)
 
-            // Only affect bodies within radius
             if (distance < radius && distance > 0.01) {
-              // Avoid division by zero
-              // Calculate explosion direction
               const direction = bodyPosition.clone().sub(center)
 
-              // Normalize only if distance is significant
               if (direction.length() > 0.01) {
                 direction.normalize()
               } else {
-                // Random direction for objects at exact same position
                 direction
                   .set(
                     (Math.random() - 0.5) * 2,
@@ -102,19 +89,15 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
                   .normalize()
               }
 
-              // Calculate force with falloff (quadratic for more realistic effect)
               const falloff = Math.max(0, 1 - distance / radius)
               const explosionForce = force * falloff * falloff
 
-              // Add upward bias for more dramatic effect
               direction.y = Math.max(direction.y, 0.2)
               direction.normalize()
 
-              // Apply linear impulse
               const impulse = direction.multiplyScalar(explosionForce)
               rigidBody.applyImpulse(impulse, true)
 
-              // Apply angular impulse for spinning effect (smaller magnitude)
               const torqueStrength = explosionForce * 0.05
               const torque = new Vector3(
                 (Math.random() - 0.5) * torqueStrength,
@@ -138,20 +121,17 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
     [world]
   )
 
-  // Create explosion with options
   const createExplosion = useCallback(
     (options: CreateExplosionOptions) => {
       try {
-        // Validate position
         if (!options.position || !options.position.isVector3) {
           console.error('Invalid position provided to createExplosion')
           return null
         }
 
-        // Check explosion limit
         if (explosions.length >= explosionConfig.maxExplosions) {
           console.warn('Maximum explosions reached, removing oldest')
-          setExplosions((prev) => prev.slice(1)) // Remove oldest
+          setExplosions((prev) => prev.slice(1))
         }
 
         const explosionId = generateExplosionId()
@@ -160,7 +140,7 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
 
         const explosion: ExplosionEffect = {
           id: explosionId,
-          position: options.position.clone(), // Always clone to avoid reference issues
+          position: options.position.clone(),
           velocity: options.velocity?.clone(),
           force,
           radius,
@@ -168,10 +148,8 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
           disposed: false,
         }
 
-        // Apply physics force
         applyExplosionForce(explosion.position, force, radius)
 
-        // Add to state
         setExplosions((prev) => [...prev, explosion])
 
         return explosionId
@@ -188,15 +166,6 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
     ]
   )
 
-  // Simple create explosion (backward compatibility)
-  const createSimpleExplosion = useCallback(
-    (position: Vector3, velocity?: Vector3) => {
-      return createExplosion({ position, velocity })
-    },
-    [createExplosion]
-  )
-
-  // Register geometry for cleanup
   const registerGeometry = useCallback(
     (explosionId: string, geometry: BufferGeometry) => {
       if (!geometry) return
@@ -211,7 +180,6 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
     []
   )
 
-  // Clean up geometry for specific explosion
   const cleanupExplosionGeometry = useCallback((explosionId: string) => {
     try {
       const geometries = geometriesRef.current.get(explosionId)
@@ -230,14 +198,11 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
     }
   }, [])
 
-  // Remove specific explosion
   const removeExplosion = useCallback(
     (explosionId: string) => {
       try {
-        // Clean up geometry first
         cleanupExplosionGeometry(explosionId)
 
-        // Remove from state
         setExplosions((prev) => prev.filter((e) => e.id !== explosionId))
       } catch (error) {
         console.error('Error removing explosion:', error)
@@ -246,26 +211,21 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
     [cleanupExplosionGeometry]
   )
 
-  // Clear all explosions
   const clearAllExplosions = useCallback(() => {
     try {
-      // Clean up all geometries
       for (const [explosionId] of geometriesRef.current) {
         cleanupExplosionGeometry(explosionId)
       }
 
-      // Clear state
       setExplosions([])
     } catch (error) {
       console.error('Error clearing all explosions:', error)
     }
   }, [cleanupExplosionGeometry])
 
-  // Frame-based cleanup with throttling
   useFrame(() => {
     const now = Date.now()
 
-    // Only cleanup every cleanupInterval ms to avoid performance issues
     if (now - lastCleanupRef.current < explosionConfig.cleanupInterval) {
       return
     }
@@ -284,13 +244,11 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
           return !isExpired
         })
 
-        // Clean up geometries for expired explosions IMMEDIATELY
         expiredExplosions.forEach((id) => {
           console.log('Cleaning up geometries for expired explosion:', id)
           cleanupExplosionGeometry(id)
         })
 
-        // Aggressive cleanup: also clean any geometries for explosions that no longer exist
         const activeExplosionIds = new Set(newExplosions.map((e) => e.id))
         const geometryIds = Array.from(geometriesRef.current.keys())
 
@@ -301,7 +259,6 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
           }
         })
 
-        // Only update state if there were changes
         return newExplosions.length !== prev.length ? newExplosions : prev
       })
     } catch (error) {
@@ -309,14 +266,11 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
     }
   })
 
-  // Cleanup on unmount
   useEffect(() => {
-    // Capture the current geometries map
     const currentGeometries = geometriesRef.current
 
     return () => {
       try {
-        // Clean up all geometries on unmount using captured value
         for (const [, geometries] of currentGeometries) {
           if (geometries) {
             geometries.forEach((geometry) => {
@@ -328,15 +282,14 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
             })
           }
         }
-        // Clear the map
+
         currentGeometries.clear()
       } catch (error) {
         console.error('Error during cleanup on unmount:', error)
       }
     }
-  }, []) // Remove cleanupExplosionGeometry dependency since we're doing direct cleanup
+  }, [])
 
-  // Debug info
   const getDebugInfo = useCallback(() => {
     const geometryCount = Array.from(geometriesRef.current.values()).reduce(
       (total, geometries) => total + geometries.length,
@@ -362,25 +315,20 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
   }, [explosionConfig, explosions])
 
   return {
-    // Main API
     explosions,
     createExplosion,
-    createSimpleExplosion, // Backward compatibility
+
     removeExplosion,
     clearAllExplosions,
 
-    // Geometry management
     registerGeometry,
     cleanupExplosionGeometry,
 
-    // Physics
     applyExplosionForce,
 
-    // Utils
     getDebugInfo,
-    logDebugInfo: () => getDebugInfo(), // Easy debug function
+    logDebugInfo: () => getDebugInfo(),
 
-    // Config
     config: explosionConfig,
   }
 }

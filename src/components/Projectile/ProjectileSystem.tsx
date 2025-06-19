@@ -17,9 +17,9 @@ export const ProjectileSystem = () => {
   } = useProjectiles()
 
   const { explosions, createExplosion, registerGeometry } = useExplosions({
-    defaultForce: 20,
-    defaultRadius: 10,
-    maxExplosions: 5,
+    defaultForce: 40,
+    defaultRadius: 11,
+    maxExplosions: 3,
   })
 
   const handleProjectileImpact = useCallback(
@@ -34,9 +34,8 @@ export const ProjectileSystem = () => {
         createExplosion({
           position: new Vector3(worldPos.x, worldPos.y, worldPos.z),
           velocity: velocity
-            ? new Vector3(velocity.x, velocity.y, velocity.z)
+            ? new Vector3(velocity.x + 30, velocity.y + 30, velocity.z + 30)
             : undefined,
-          force: 5,
         })
       }
     },
@@ -87,7 +86,7 @@ export const ProjectileSystem = () => {
         <ExplosionRenderer
           key={explosion.id}
           explosion={explosion}
-          registerGeometry={registerGeometry} // Pass the geometry registration function
+          registerGeometry={registerGeometry}
         />
       ))}
     </>

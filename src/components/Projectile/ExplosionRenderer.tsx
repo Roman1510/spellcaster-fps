@@ -1,5 +1,12 @@
-import { useMemo, useRef } from 'react'
-import { Vector3, Color, BufferGeometry, ShaderMaterial } from 'three'
+import { useMemo, useRef, useEffect } from 'react'
+import {
+  Vector3,
+  Color,
+  BufferGeometry,
+  ShaderMaterial,
+  SphereGeometry,
+} from 'three'
+import { useFrame } from '@react-three/fiber'
 import { ExplosionEffect } from './hooks/use-explosion'
 import {
   createCircularFireParticles,
@@ -9,6 +16,64 @@ import {
 import { calculateExplosionProperties } from './utils/projectileHelpers'
 import { EXPLOSION_CONFIG } from './constants/constants'
 import { createCircularParticleMaterial } from '../../shaders/circularParticleShader'
+import { createExplosionMaterial } from '../../shaders/explosionShader'
+
+let sharedExplosionGeometry: SphereGeometry | null = null
+let sharedExplosionMaterial: ShaderMaterial | null = null
+let sharedSmokeGeometry: BufferGeometry | null = null
+let sharedFireParticleGeometry: BufferGeometry | null = null
+let sharedCircularParticleGeometry: BufferGeometry | null = null
+let explosionInstanceCount = 0
+
+const getSharedResources = () => {
+  if (!sharedExplosionGeometry) {
+    sharedExplosionGeometry = new SphereGeometry(
+      EXPLOSION_CONFIG.blastSize,
+      16,
+      16
+    )
+  }
+  if (!sharedExplosionMaterial) {
+    sharedExplosionMaterial = createExplosionMaterial()
+  }
+  if (!sharedSmokeGeometry) {
+    sharedSmokeGeometry = createSmokeGeometry()
+  }
+  if (!sharedFireParticleGeometry) {
+    sharedFireParticleGeometry = createFireParticleGeometry()
+  }
+  if (!sharedCircularParticleGeometry) {
+    sharedCircularParticleGeometry = createCircularFireParticles()
+  }
+
+  explosionInstanceCount++
+
+  return {
+    explosionGeometry: sharedExplosionGeometry,
+    explosionMaterial: sharedExplosionMaterial,
+    smokeGeometry: sharedSmokeGeometry,
+    fireParticleGeometry: sharedFireParticleGeometry,
+    circularParticleGeometry: sharedCircularParticleGeometry,
+  }
+}
+
+const releaseSharedResources = () => {
+  explosionInstanceCount--
+
+  if (explosionInstanceCount === 0) {
+    sharedExplosionGeometry?.dispose()
+    sharedExplosionMaterial?.dispose()
+    sharedSmokeGeometry?.dispose()
+    sharedFireParticleGeometry?.dispose()
+    sharedCircularParticleGeometry?.dispose()
+
+    sharedExplosionGeometry = null
+    sharedExplosionMaterial = null
+    sharedSmokeGeometry = null
+    sharedFireParticleGeometry = null
+    sharedCircularParticleGeometry = null
+  }
+}
 
 interface ExplosionRendererProps {
   explosion: ExplosionEffect
@@ -19,102 +84,102 @@ export const ExplosionRenderer = ({
   explosion,
   registerGeometry,
 }: ExplosionRendererProps) => {
-  const smokeGeometry = useMemo(() => {
-    const geom = createSmokeGeometry()
-    if (registerGeometry) {
-      registerGeometry(explosion.id, geom)
-    }
-    return geom
-  }, [explosion.id, registerGeometry])
+  const resources = useRef(getSharedResources())
+  const hasCleanedUp = useRef(false)
 
-  const fireParticleGeometry = useMemo(() => {
-    const geom = createFireParticleGeometry()
-    if (registerGeometry) {
-      registerGeometry(explosion.id, geom)
-    }
-    return geom
-  }, [explosion.id, registerGeometry])
+  const explosionMaterialInstance = useMemo(() => {
+    const mat = resources.current.explosionMaterial.clone()
+    return mat
+  }, [])
 
-  const age = (Date.now() - explosion.createdAt) / 1000
-  const {
-    scale,
-    opacity,
-    coreColor,
-    emissiveColor,
-    emissiveIntensity,
-    blastColor,
-    smokeColor,
-  } = calculateExplosionProperties(age)
-
-  // Use velocity if available for dynamic effects
-  const velocityOffset = explosion.velocity
-    ? new Vector3(
-        explosion.velocity.x * age * 0.1,
-        explosion.velocity.y * age * 0.05,
-        explosion.velocity.z * age * 0.1
-      )
-    : new Vector3(0, 0, 0)
-
-  const circularParticleGeometry = useMemo(
-    () => createCircularFireParticles(),
-    []
-  )
-  const particleRef = useRef<ShaderMaterial>(null)
   const circularParticleMaterial = useMemo(
     () => createCircularParticleMaterial(),
     []
   )
 
+  useFrame((state) => {
+    if (hasCleanedUp.current) return
+
+    const age = (Date.now() - explosion.createdAt) / 1000
+
+    if (explosionMaterialInstance) {
+      explosionMaterialInstance.uniforms.uTime.value = state.clock.elapsedTime
+      explosionMaterialInstance.uniforms.uAge.value = age
+      explosionMaterialInstance.uniforms.uExpansion.value = Math.min(
+        age * 2,
+        1.5
+      )
+      explosionMaterialInstance.uniforms.uOpacity.value = 1.0 - age / 2
+      explosionMaterialInstance.uniforms.uIntensity.value = Math.max(
+        0.5,
+        2.0 - age
+      )
+    }
+  })
+
+  useEffect(() => {
+    if (registerGeometry) {
+      registerGeometry(explosion.id, resources.current.explosionGeometry)
+      registerGeometry(explosion.id, resources.current.smokeGeometry)
+      registerGeometry(explosion.id, resources.current.fireParticleGeometry)
+    }
+
+    return () => {
+      if (!hasCleanedUp.current) {
+        hasCleanedUp.current = true
+        explosionMaterialInstance.dispose()
+        circularParticleMaterial.dispose()
+        releaseSharedResources()
+      }
+    }
+  }, [
+    explosion.id,
+    explosionMaterialInstance,
+    circularParticleMaterial,
+    registerGeometry,
+  ])
+
+  const age = (Date.now() - explosion.createdAt) / 1000
+  const { scale, opacity, smokeColor } = calculateExplosionProperties(age)
+
+  const velocityOffset = explosion.velocity
+    ? new Vector3(
+        explosion.velocity.x * age * 0.1,
+        explosion.velocity.y * age * 0.2,
+        explosion.velocity.z * age * 0.1
+      )
+    : new Vector3(0, 0, 0)
+
   return (
     <group position={explosion.position}>
-      {/* Fire explosion core */}
-      <mesh>
-        <sphereGeometry args={[scale * EXPLOSION_CONFIG.coreSize, 16, 16]} />
-        <meshStandardMaterial
-          color={coreColor}
-          transparent
-          opacity={opacity * 0.75}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
+      {/* Main explosion with shader */}
+      <mesh scale={scale}>
+        <primitive
+          object={resources.current.explosionGeometry}
+          attach="geometry"
         />
+        <primitive object={explosionMaterialInstance} attach="material" />
       </mesh>
-      {/* Outer fire blast */}
-      <mesh>
-        <sphereGeometry args={[scale * EXPLOSION_CONFIG.blastSize, 12, 12]} />
-        <meshBasicMaterial
-          color={blastColor}
-          transparent
-          opacity={opacity * 0.4}
-          blending={2} // Additive blending
-        />
-      </mesh>
-      {/* Secondary blast wave for more depth */}
-      <mesh>
-        <sphereGeometry
-          args={[scale * EXPLOSION_CONFIG.blastSize * 1.3, 10, 10]}
-        />
-        <meshBasicMaterial
-          color={new Color(0xff4400)}
-          transparent
-          opacity={opacity * 0.3}
-          blending={2}
-        />
-      </mesh>
+
       {/* Smoke lines spreading from impact */}
       <lineSegments
-        geometry={smokeGeometry}
-        scale={[scale * 1.5, scale, scale * 1.5]}
+        geometry={resources.current.smokeGeometry}
+        scale={[scale * 1.3, scale * 1.2, scale * 1.3]}
       >
         <lineBasicMaterial
           color={smokeColor}
           transparent
-          opacity={opacity * 0.7}
+          opacity={opacity * 0.55}
           blending={2}
-          linewidth={2}
+          linewidth={1}
         />
       </lineSegments>
-      Fire particles with velocity influence
-      <points geometry={fireParticleGeometry} position={velocityOffset}>
+
+      {/* Fire particles with velocity influence */}
+      <points
+        geometry={resources.current.fireParticleGeometry}
+        position={velocityOffset}
+      >
         <pointsMaterial
           size={0.2 * scale}
           transparent
@@ -124,10 +189,12 @@ export const ExplosionRenderer = ({
           blending={2}
         />
       </points>
+
       {/* Circular particles */}
-      <points geometry={circularParticleGeometry}>
-        <primitive object={circularParticleMaterial} ref={particleRef} />
+      <points geometry={resources.current.circularParticleGeometry}>
+        <primitive object={circularParticleMaterial} attach="material" />
       </points>
+
       {/* Hot sparks effect (only during initial explosion) */}
       {age < 0.3 && (
         <points>

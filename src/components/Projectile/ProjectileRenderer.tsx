@@ -1,11 +1,7 @@
 import { RigidBody, RapierRigidBody } from '@react-three/rapier'
-import { Trail } from '@react-three/drei'
+
 import { ShaderMaterial, Vector3 } from 'three'
-import {
-  PROJECTILE_CONFIG,
-  TRAIL_CONFIG,
-  PHYSICS_DELAY,
-} from './constants/constants'
+import { PROJECTILE_CONFIG, PHYSICS_DELAY } from './constants/constants'
 import { createFireProjectileMaterial } from '../../shaders/fireShaderMaterial'
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
@@ -64,17 +60,8 @@ export const ProjectileRenderer = ({
           onCollision(id)
         }}
       >
-        <Trail
-          width={TRAIL_CONFIG.width}
-          length={TRAIL_CONFIG.length}
-          color={TRAIL_CONFIG.color}
-          attenuation={(t: number) => {
-            return --t * t * t + 1
-          }}
-          interval={3}
-        ></Trail>
         <mesh>
-          <dodecahedronGeometry args={[PROJECTILE_CONFIG.size, 1]} />
+          <dodecahedronGeometry args={[PROJECTILE_CONFIG.size, 3]} />
           <primitive object={materialRef.current} attach="material" />
         </mesh>
       </RigidBody>
