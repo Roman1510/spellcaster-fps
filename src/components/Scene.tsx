@@ -7,16 +7,6 @@ interface ISceneProps {
   canvasRef: RefObject<HTMLCanvasElement | null>
 }
 
-export const FPSControls = () => {
-  return (
-    <PointerLockControls
-      makeDefault
-      minPolarAngle={0}
-      maxPolarAngle={Math.PI}
-    />
-  )
-}
-
 export function Scene({ canvasRef }: ISceneProps) {
   return (
     <>

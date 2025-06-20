@@ -20,13 +20,13 @@ export function Player() {
       <RigidBody
         ref={ref}
         colliders={false}
-        mass={200}
+        mass={50}
         type="dynamic"
-        position={[0, 2, 35]}
+        position={[-300, 2, -45]}
         enabledRotations={[false, false, false]}
         lockRotations
       >
-        <CapsuleCollider args={[0.8, 0.4]} />
+        <CapsuleCollider args={[1.4, 0.5]} />
       </RigidBody>
 
       <group ref={armsRef}>
@@ -34,7 +34,7 @@ export function Player() {
       </group>
 
       <mesh ref={targetRef} visible={false}>
-        <sphereGeometry args={[0.002, 8]} />
+        <sphereGeometry args={[0.001, 1]} />
       </mesh>
     </>
   )

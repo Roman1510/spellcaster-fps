@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { useKeyboardControls } from '@react-three/drei'
-import { useEffect, RefObject } from 'react'
+import { useEffect, RefObject, useRef } from 'react'
 import { Vector3, Mesh, Group } from 'three'
 import { RapierRigidBody } from '@react-three/rapier'
 
@@ -10,9 +10,9 @@ const sideVector = new Vector3()
 const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
-const BASE_SPEED_MULTIPLIER = 5
-const DASH_SPEED_MULTIPLIER = 25
-const JUMP_VELOCITY = 25
+const BASE_SPEED_MULTIPLIER = 12
+const DASH_SPEED_MULTIPLIER = 35
+const JUMP_VELOCITY = 10
 const EYE_LEVEL_OFFSET = 2
 
 export const usePlayerControl = (
@@ -21,6 +21,7 @@ export const usePlayerControl = (
   armsRef: RefObject<Group | null>
 ) => {
   const [, get] = useKeyboardControls()
+  const hasSetInitialRotation = useRef(false)
 
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
@@ -38,6 +39,12 @@ export const usePlayerControl = (
   }, [])
 
   useFrame((state) => {
+    //small hack :D
+    if (!hasSetInitialRotation.current) {
+      state.camera.rotation.y = -Math.PI / 2
+      hasSetInitialRotation.current = true
+    }
+
     if (ref.current) {
       const { forward, backward, left, right, dash, jump } = get()
 
@@ -55,7 +62,7 @@ export const usePlayerControl = (
         .multiplyScalar(dash ? DASH_SPEED_MULTIPLIER : BASE_SPEED_MULTIPLIER)
         .applyQuaternion(state.camera.quaternion)
 
-      const isGrounded = y <= 2
+      const isGrounded = y <= 37
       const yVelocity = jump && isGrounded ? JUMP_VELOCITY : velocity.y
 
       ref.current.setLinvel(

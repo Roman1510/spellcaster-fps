@@ -1,7 +1,8 @@
 import { useLoader } from '@react-three/fiber'
-import { CylinderCollider, RigidBody } from '@react-three/rapier'
+import { RigidBody } from '@react-three/rapier'
 import { RepeatWrapping, TextureLoader } from 'three'
 import { EXRLoader } from 'three/examples/jsm/Addons.js'
+import { Castle } from './Castle'
 
 export const Ground = () => {
   const texture = useLoader(TextureLoader, '/floor_diff.jpg')
@@ -21,21 +22,10 @@ export const Ground = () => {
   normalMap.repeat.set(repeatCount, repeatCount)
 
   return (
-    <RigidBody type="fixed" colliders={false} friction={0.7}>
-      <CylinderCollider position={[0, -0.1, 0]} args={[0.1, 150]}>
-        <mesh
-          receiveShadow
-          position={[0, 0.1, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <circleGeometry args={[150, 64]} />
-          <meshPhysicalMaterial
-            map={texture}
-            roughnessMap={roughnessMap}
-            normalMap={normalMap}
-          />
-        </mesh>
-      </CylinderCollider>
-    </RigidBody>
+    <group>
+      <RigidBody type="fixed" colliders="trimesh">
+        <Castle scale={30} position={[0, -37, 0]} />
+      </RigidBody>
+    </group>
   )
 }

@@ -31,7 +31,7 @@ export function CanvasWrapper() {
           camera={{ fov: 38 }}
           onCreated={({ scene }) => {
             scene.background = new Color('#000000')
-            scene.fog = new FogExp2('#000000', 0.006)
+            scene.fog = new FogExp2('#000000', 0.003)
           }}
           gl={{
             powerPreference: 'high-performance',

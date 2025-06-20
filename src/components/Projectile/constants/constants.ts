@@ -8,7 +8,7 @@ export const PROJECTILE_CONFIG: ProjectileConfig = {
   linearDamping: 0.3,
   restitution: 0.5,
   size: 1.3,
-  lifetime: 1000,
+  lifetime: 2300,
   impactDisappearTime: 50,
 }
 
