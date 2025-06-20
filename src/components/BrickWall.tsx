@@ -4,13 +4,13 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const colors = [
-  '#12f702',
-  '#4ECDC4',
-  '#45B7D1',
-  '#96CEB4',
-  '#FECA57',
-  '#FF9FF3',
-  '#54A0FF',
+  '#E91E63',
+  '#9C27B0',
+  '#673AB7',
+  '#3F51B5',
+  '#2196F3',
+  '#00BCD4',
+  '#009688',
 ]
 
 type BrickInstance = {
@@ -40,12 +40,11 @@ export const BrickWall = () => {
 
   const { instances, materials } = useMemo(() => {
     const brickInstances: BrickInstance[] = []
-    const materialMap: Record<string, THREE.MeshStandardMaterial> = {}
+    const materialMap: Record<string, THREE.MeshBasicMaterial> = {}
 
     colors.forEach((color) => {
-      materialMap[color] = new THREE.MeshStandardMaterial({
+      materialMap[color] = new THREE.MeshBasicMaterial({
         color,
-        roughness: 0.4,
       })
     })
 
