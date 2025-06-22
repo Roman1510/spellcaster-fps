@@ -18,9 +18,10 @@ export function Player() {
   return (
     <>
       <RigidBody
+        gravityScale={2}
         ref={ref}
         colliders={false}
-        mass={50}
+        mass={150}
         type="dynamic"
         position={[-300, 2, -45]}
         enabledRotations={[false, false, false]}
