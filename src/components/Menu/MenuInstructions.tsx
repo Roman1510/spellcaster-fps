@@ -19,6 +19,7 @@ export function MenuInstructions({ hasStarted }: MenuInstructionsProps) {
           ENTER / SPACE: Select
           <br />
           ESC: Pause Game
+          <br />F : Reset blocks
         </>
       ) : (
         <>

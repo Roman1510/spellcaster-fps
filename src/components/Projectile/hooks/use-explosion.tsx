@@ -296,17 +296,6 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
       0
     )
 
-    console.log('=== EXPLOSION DEBUG ===')
-    console.log('Active explosions:', explosions.length)
-    console.log('Tracked geometry groups:', geometriesRef.current.size)
-    console.log('Total geometries:', geometryCount)
-    console.log(
-      'Explosion IDs:',
-      explosions.map((e) => e.id)
-    )
-    console.log('Geometry IDs:', Array.from(geometriesRef.current.keys()))
-    console.log('======================')
-
     return {
       explosionCount: explosions.length,
       geometryCount,

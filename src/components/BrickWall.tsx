@@ -165,7 +165,6 @@ export const BrickWall = () => {
       setTimeout(() => {
         setIsParticleMode(false)
         setIsRebuilding(false)
-        console.log('✨ Wall rebuilt!')
       }, 500)
     }
   })
@@ -173,7 +172,6 @@ export const BrickWall = () => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() === 'f' && !isRebuilding) {
-        console.log('🌟 Starting particle rebuild...')
         setIsRebuilding(true)
         createParticles()
         setIsParticleMode(true)

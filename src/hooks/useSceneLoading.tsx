@@ -9,21 +9,11 @@ export function useSceneLoading() {
   const fallbackTriggered = useRef(false)
 
   useEffect(() => {
-    console.log('🔍 Progress:', { progress, loaded, total, active })
-
     if (!checkStarted.current) {
       checkStarted.current = true
 
       setTimeout(() => {
-        console.log('🕐 After delay - Progress:', {
-          progress,
-          loaded,
-          total,
-          active,
-        })
-
         if (total === 0 && !fallbackTriggered.current) {
-          console.log('⚠️ No assets detected after delay, using fallback')
           fallbackTriggered.current = true
           startFallbackLoading()
         }
@@ -31,7 +21,6 @@ export function useSceneLoading() {
     }
 
     if (total > 0) {
-      console.log('✅ Assets detected! Total:', total, 'Loaded:', loaded)
       const progressPercent = (loaded / total) * 100
       setProgress(progressPercent)
 
@@ -47,7 +36,7 @@ export function useSceneLoading() {
         setMessage('Ready to start!')
         setTimeout(() => {
           setLoading(false)
-        }, 500)
+        }, 300)
       }
     }
   }, [progress, loaded, total, active, setProgress, setMessage, setLoading])
@@ -59,19 +48,19 @@ export function useSceneLoading() {
     setTimeout(() => {
       setProgress(50)
       setMessage('Loading textures...')
-    }, 400)
+    }, 200)
 
     setTimeout(() => {
       setProgress(80)
       setMessage('Preparing physics...')
-    }, 800)
+    }, 600)
 
     setTimeout(() => {
       setProgress(100)
       setMessage('Ready to start!')
       setTimeout(() => {
         setLoading(false)
-      }, 300)
-    }, 1200)
+      }, 250)
+    }, 1000)
   }
 }
