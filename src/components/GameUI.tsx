@@ -82,16 +82,13 @@ export function GameUI({
       <MenuOverlay>
         <MenuContainer>
           <MenuTitle hasStarted={hasStarted} title={gameTitle} />
-
           <MenuOptions
             options={menuOptions}
             selectedOption={selectedOption}
             onSelect={setSelectedOption}
             onHover={playHoverSound}
           />
-
           <MenuInstructions hasStarted={hasStarted} />
-
           <MenuStatusIndicator show={!hasStarted} />
         </MenuContainer>
       </MenuOverlay>

@@ -26,7 +26,7 @@ export const Stage = () => {
           rotation={[0, Math.PI / 2, 0]}
           position={[35, 3, -5]}
         >
-          <Suspense>
+          <Suspense fallback={null}>
             <BrickWall />
           </Suspense>
         </group>

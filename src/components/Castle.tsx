@@ -85,15 +85,13 @@ interface ModelProps {
   [key: string]: unknown
 }
 
-useGLTF.preload('/castle_low_poly.glb')
-
 export function Castle(props: ModelProps = {}) {
   const gltf = useGLTF('/castle_low_poly.glb')
 
-  const woodMaterial = useRef(createFuturisticMaterial('#8B4513', 0.1)) // Brown-red
-  const bricksMaterial = useRef(createFuturisticMaterial('#FF69B4', 1.5)) // Hot pink
-  const wallsMaterial = useRef(createFuturisticMaterial('#6A0DAD', 1.1)) // Orchid pink
-  const groundMaterial = useRef(createFuturisticMaterial('#6A0DAD', 0.1)) // Deep purple
+  const woodMaterial = useRef(createFuturisticMaterial('#8B4513', 0.1))
+  const bricksMaterial = useRef(createFuturisticMaterial('#FF69B4', 1.5))
+  const wallsMaterial = useRef(createFuturisticMaterial('#6A0DAD', 1.1))
+  const groundMaterial = useRef(createFuturisticMaterial('#6A0DAD', 0.1))
 
   const nodes = gltf.nodes as {
     Cube001_0: Mesh

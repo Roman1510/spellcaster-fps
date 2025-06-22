@@ -5,11 +5,15 @@ import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
 import { Perf } from 'r3f-perf'
 import { Preload } from '@react-three/drei'
-import { Loader } from './Loader'
 import { GameUI } from './GameUI'
+import { LoadingScreen } from './LoadingScreen'
+import { LoadingProvider } from '../context/LoadingProvider'
+import { useLoading } from '../hooks/useLoading'
+import { ScanlineEffect } from './ScanLineEffect'
 
-export function CanvasWrapper() {
+function CanvasContent() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const { isLoading } = useLoading()
 
   const canvasStyle: React.CSSProperties = {
     imageRendering: 'pixelated',
@@ -51,40 +55,17 @@ export function CanvasWrapper() {
             autoClear: true,
           }}
         >
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={<LoadingScreen />}>
             <Scene key="scene-game" canvasRef={canvasRef} />
-            <Preload all />
-            <Perf position="top-left" />
           </Suspense>
+          <Preload all />
+          <Perf position="top-left" />
         </Canvas>
       </div>
 
-      {/* Scanline effect */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: `
-            repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent ${3}px,
-              rgba(0,0,0,0.1) ${4}px
-            ),
-            repeating-linear-gradient(
-              90deg,
-              transparent,
-              transparent ${3}px,
-              rgba(0,0,0,0.1) ${4}px
-            )
-          `,
-          pointerEvents: 'none',
-          mixBlendMode: 'multiply',
-        }}
-      />
+      <ScanlineEffect />
+
+      {isLoading && <LoadingScreen />}
 
       <GameUI
         onStart={handleStart}
@@ -92,5 +73,13 @@ export function CanvasWrapper() {
         onRestart={handleRestart}
       />
     </div>
+  )
+}
+
+export function CanvasWrapper() {
+  return (
+    <LoadingProvider>
+      <CanvasContent />
+    </LoadingProvider>
   )
 }

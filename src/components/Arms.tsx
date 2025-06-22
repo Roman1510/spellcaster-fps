@@ -7,66 +7,63 @@ Source: https://sketchfab.com/3d-models/psx-first-person-arms-efd731f559a14ab48e
 Title: PSX First Person Arms
 */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import { Group } from 'three'
 
 export function Arms(props: any) {
   const group = useRef<Group>(null)
+  const isMouseDown = useRef(false)
 
-  // Remove the type assertion - let drei handle the typing
   const gltf = useGLTF('/psx_first_person_arms.glb')
   const { nodes, materials, animations } = gltf
   const { actions } = useAnimations(animations, group)
 
-  const [isMagicActive, setIsMagicActive] = useState(false)
+  const switchAnimation = useCallback(
+    (toMagic: boolean) => {
+      const idleAction = actions['arms_armature|Relax_hands_idle_loop']
+      const magicSpellAction = actions['arms_armature|Magic_spell_loop']
 
-  useEffect(() => {
-    if (!group.current) return
+      if (!idleAction || !magicSpellAction) {
+        console.error('Required animations are missing.')
+        return
+      }
 
-    const idleAction = actions['arms_armature|Relax_hands_idle_loop']
-    const magicSpellAction = actions['arms_armature|Magic_spell_loop']
-
-    if (!idleAction || !magicSpellAction) {
-      console.error('One or more required animations are missing.')
-      return
-    }
-
-    idleAction.play()
-    // magicSpellAction.play().paused = true // Start paused
-
-    const handleAnimationTransition = () => {
-      if (isMagicActive) {
-        if (idleAction.isRunning()) {
-          idleAction.fadeOut(0.01)
-        }
-        magicSpellAction.reset().fadeIn(0.001).play()
+      if (toMagic) {
+        idleAction.fadeOut(0.1)
+        magicSpellAction.reset().fadeIn(0.1).play()
       } else {
-        if (magicSpellAction.isRunning()) {
-          magicSpellAction.fadeOut(0.01)
-        }
-        idleAction.reset().play()
+        magicSpellAction.fadeOut(0.1)
+        idleAction.reset().fadeIn(0.1).play()
       }
-    }
+    },
+    [actions]
+  )
 
-    // Watch for changes in mouse state
-    handleAnimationTransition()
-  }, [actions, isMagicActive])
+  const handleMouseDown = useCallback(
+    (event: MouseEvent) => {
+      if (event.button === 0 && !isMouseDown.current) {
+        isMouseDown.current = true
+        switchAnimation(true)
+      }
+    },
+    [switchAnimation]
+  )
 
-  // Handle mouse down and up events
+  const handleMouseUp = useCallback(
+    (event: MouseEvent) => {
+      if (event.button === 0 && isMouseDown.current) {
+        isMouseDown.current = false
+        switchAnimation(false)
+      }
+    },
+    [switchAnimation]
+  )
+
   useEffect(() => {
-    const handleMouseDown = (event: MouseEvent) => {
-      if (event.button === 0) {
-        // Left mouse button
-        setIsMagicActive(true)
-      }
-    }
-
-    const handleMouseUp = (event: MouseEvent) => {
-      if (event.button === 0) {
-        // Left mouse button
-        setIsMagicActive(false)
-      }
+    const idleAction = actions['arms_armature|Relax_hands_idle_loop']
+    if (idleAction) {
+      idleAction.play()
     }
 
     window.addEventListener('mousedown', handleMouseDown)
@@ -76,7 +73,7 @@ export function Arms(props: any) {
       window.removeEventListener('mousedown', handleMouseDown)
       window.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [])
+  }, [actions, handleMouseDown, handleMouseUp])
 
   return (
     <group ref={group} {...props} dispose={null}>
@@ -84,10 +81,11 @@ export function Arms(props: any) {
         <boxGeometry args={[0.005, 0.005]} />
         <meshBasicMaterial color="white" />
       </mesh>
+
       <group
         name="Sketchfab_Scene"
         rotation={[0, Math.PI, 0]}
-        scale={[0.24, 0.24, 0.24]}
+        scale={0.24}
         position={[0, -1.22, 0]}
       >
         <group
@@ -127,5 +125,3 @@ export function Arms(props: any) {
     </group>
   )
 }
-
-useGLTF.preload('/psx_first_person_arms.glb')
