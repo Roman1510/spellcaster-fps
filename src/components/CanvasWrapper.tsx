@@ -1,13 +1,12 @@
 import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
-
 import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
-
 import { Perf } from 'r3f-perf'
 import { Preload } from '@react-three/drei'
 import { Loader } from './Loader'
+import { GameUI } from './GameUI'
 
 export function CanvasWrapper() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -18,6 +17,18 @@ export function CanvasWrapper() {
     height: '100%',
   }
 
+  const handleStart = () => {
+    canvasRef.current?.requestPointerLock()
+  }
+
+  const handleContinue = () => {
+    canvasRef.current?.requestPointerLock()
+  }
+
+  const handleRestart = () => {
+    canvasRef.current?.requestPointerLock()
+  }
+
   return (
     <div
       className="canvas-wrapper"
@@ -25,6 +36,7 @@ export function CanvasWrapper() {
     >
       <div style={canvasStyle}>
         <Canvas
+          ref={canvasRef}
           shadows
           key="canvas-game"
           dpr={0.4}
@@ -46,48 +58,39 @@ export function CanvasWrapper() {
           </Suspense>
         </Canvas>
       </div>
-      {
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: `
-              repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent ${3}px,
-                rgba(0,0,0,0.1) ${4}px
-              ),
-              repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent ${3}px,
-                rgba(0,0,0,0.1) ${4}px
-              )
-            `,
-            pointerEvents: 'none',
-            mixBlendMode: 'multiply',
-          }}
-        />
-      }
-      {/* {vignetteIntensity > 0 && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: `radial-gradient(circle at ${fishEyeCenterX * 100}% ${fishEyeCenterY * 100}%, 
-              transparent 20%, 
-              rgba(0,0,0,${vignetteIntensity * 0.8}) 80%)`,
-            pointerEvents: 'none'
-          }}
-        />
-      )} */}
+
+      {/* Scanline effect */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+            repeating-linear-gradient(
+              0deg,
+              transparent,
+              transparent ${3}px,
+              rgba(0,0,0,0.1) ${4}px
+            ),
+            repeating-linear-gradient(
+              90deg,
+              transparent,
+              transparent ${3}px,
+              rgba(0,0,0,0.1) ${4}px
+            )
+          `,
+          pointerEvents: 'none',
+          mixBlendMode: 'multiply',
+        }}
+      />
+
+      <GameUI
+        onStart={handleStart}
+        onContinue={handleContinue}
+        onRestart={handleRestart}
+      />
     </div>
   )
 }
