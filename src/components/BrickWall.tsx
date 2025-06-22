@@ -3,14 +3,15 @@ import { InstancedRigidBodies } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
+//too lazy to change this
 const colors = [
-  '#E91E63',
-  '#9C27B0',
-  '#673AB7',
-  '#3F51B5',
-  '#2196F3',
-  '#00BCD4',
-  '#009688',
+  '#00ff00',
+  '#00ff00',
+  '#00ff00',
+  '#00ff00',
+  '#00ff00',
+  '#00ff00',
+  '#00ff00',
 ]
 
 type BrickInstance = {

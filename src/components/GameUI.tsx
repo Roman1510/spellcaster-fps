@@ -9,6 +9,7 @@ import { MenuOptions } from './Menu/MenuOptions'
 import { MenuInstructions } from './Menu/MenuInstructions'
 import { MenuStatusIndicator } from './Menu/MenuStatusIndicator'
 import { MenuStyles } from './Menu/MenuStyles'
+import { MenuGoals } from './Menu/MenuGoals'
 
 interface GameUIProps {
   onStart: () => void
@@ -88,7 +89,9 @@ export function GameUI({
             onSelect={setSelectedOption}
             onHover={playHoverSound}
           />
+
           <MenuInstructions hasStarted={hasStarted} />
+          <MenuGoals />
           <MenuStatusIndicator show={!hasStarted} />
         </MenuContainer>
       </MenuOverlay>

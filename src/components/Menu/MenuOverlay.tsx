@@ -13,7 +13,7 @@ export function MenuOverlay({ children }: MenuOverlayProps) {
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        backgroundColor: 'rgba(0, 0, 0, 0.55)',
         backdropFilter: 'blur(3px)',
         zIndex: 1000,
         display: 'flex',
@@ -22,6 +22,8 @@ export function MenuOverlay({ children }: MenuOverlayProps) {
         fontFamily: '"Orbitron", "Courier New", monospace',
         color: '#00ff00',
         animation: 'fadeIn 0.3s ease-out',
+        cursor: 'default',
+        userSelect: 'none',
       }}
     >
       {children}

@@ -20,7 +20,6 @@ export function MenuContainer({ children }: MenuContainerProps) {
         animation: 'glow 2s ease-in-out infinite alternate',
       }}
     >
-      {/* Corner decorations */}
       <MenuCorners />
       {children}
     </div>
