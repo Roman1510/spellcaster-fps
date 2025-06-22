@@ -43,7 +43,7 @@ function CanvasContent() {
           ref={canvasRef}
           shadows
           key="canvas-game"
-          dpr={0.4}
+          dpr={0.55}
           camera={{ fov: 38 }}
           onCreated={({ scene }) => {
             scene.background = new Color('#000000')
