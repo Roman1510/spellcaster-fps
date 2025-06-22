@@ -125,3 +125,4 @@ export function Arms(props: any) {
     </group>
   )
 }
+useGLTF.preload('/psx_first_person_arms.glb')
