@@ -7,6 +7,7 @@ import {
 import { Mesh, Group } from 'three'
 import { Arms } from './Arms'
 import { usePlayerControl } from '../hooks/usePlayerControl'
+import { useCanFire } from '../store/GameStore'
 
 interface ArmsRef {
   switchAnimation: (toMagic: boolean) => void
@@ -18,15 +19,22 @@ export function Player() {
   const armsRef = useRef<Group>(null)
   const armsControlRef = useRef<ArmsRef>(null)
   const isMouseDown = useRef(false)
-
+  const canFire = useCanFire()
   usePlayerControl(ref, targetRef, armsRef)
 
-  const handleMouseDown = useCallback((event: MouseEvent) => {
-    if (event.button === 0 && !isMouseDown.current && armsControlRef.current) {
-      isMouseDown.current = true
-      armsControlRef.current.switchAnimation(true)
-    }
-  }, [])
+  const handleMouseDown = useCallback(
+    (event: MouseEvent) => {
+      if (
+        event.button === 0 &&
+        !isMouseDown.current &&
+        armsControlRef.current
+      ) {
+        isMouseDown.current = true
+        if (canFire) armsControlRef.current.switchAnimation(true)
+      }
+    },
+    [canFire]
+  )
 
   const handleMouseUp = useCallback((event: MouseEvent) => {
     if (event.button === 0 && isMouseDown.current && armsControlRef.current) {

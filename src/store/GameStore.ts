@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
+const ENERGY_COST = 30
+
 interface GameStore {
   pause: boolean
   setPause: (pause: boolean) => void
@@ -37,7 +39,7 @@ export const useGameStore = create<GameStore>()(
       const { canFire, energy } = get()
       if (!canFire) return false
 
-      const newEnergy = Math.max(0, energy - 50)
+      const newEnergy = Math.max(0, energy - ENERGY_COST)
       set({ energy: newEnergy })
       get()._updateCanFire()
       return true
@@ -45,7 +47,7 @@ export const useGameStore = create<GameStore>()(
 
     _updateCanFire: () => {
       const { energy, hasStarted, pause } = get()
-      const canFire = energy >= 50 && hasStarted && !pause
+      const canFire = energy >= ENERGY_COST && hasStarted && !pause
       set({ canFire })
     },
 
