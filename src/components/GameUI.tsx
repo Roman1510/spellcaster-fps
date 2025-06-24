@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useMenuNavigation } from '../hooks/useMenuNavigation'
-import { useMenuAudio } from '../hooks/useMenuAudio'
+import { useSound } from '../hooks/useSound' // Updated import
 import { MenuOverlay } from './Menu/MenuOverlay'
 import { MenuContainer } from './Menu/MenuContainer'
 import { MenuTitle } from './Menu/MenuTitle'
@@ -11,11 +11,12 @@ import { MenuStatusIndicator } from './Menu/MenuStatusIndicator'
 import { MenuStyles } from './Menu/MenuStyles'
 import { MenuGoals } from './Menu/MenuGoals'
 import { EnergyUI } from './EnergyUI'
+// Use individual hooks instead of the compound hook
 import {
-  useHasStarted,
   usePause,
-  useSetHasStarted,
+  useHasStarted,
   useSetPause,
+  useSetHasStarted,
 } from '../store/GameStore'
 
 interface GameUIProps {
@@ -38,27 +39,33 @@ export function GameUI({
 
   const [selectedOption, setSelectedOption] = useState(0)
 
-  const { playSelectSound, playHoverSound, AudioElement } = useMenuAudio()
+  const { playBackgroundMusic, stopBackgroundMusic } = useSound()
 
   const handleStart = () => {
     setHasStarted(true)
     setPause(false)
+    playBackgroundMusic()
     onStart()
-    playSelectSound()
   }
 
   const handleContinue = () => {
     setPause(false)
+    playBackgroundMusic()
     onContinue()
-    playSelectSound()
   }
 
   const handleRestart = () => {
     setHasStarted(true)
     setPause(false)
+    playBackgroundMusic()
     onRestart()
-    playSelectSound()
   }
+
+  useEffect(() => {
+    if (pause && hasStarted) {
+      stopBackgroundMusic()
+    }
+  }, [pause, hasStarted, stopBackgroundMusic])
 
   const getMenuOptions = () => {
     if (!hasStarted) {
@@ -77,7 +84,7 @@ export function GameUI({
     selectedOption,
     setSelectedOption,
     menuOptions,
-    onHover: playHoverSound,
+    onHover: () => {},
   })
 
   useEffect(() => {
@@ -88,8 +95,6 @@ export function GameUI({
 
   return (
     <>
-      <AudioElement />
-
       <MenuOverlay>
         <MenuContainer>
           <MenuTitle hasStarted={hasStarted} title={gameTitle} />
@@ -97,7 +102,6 @@ export function GameUI({
             options={menuOptions}
             selectedOption={selectedOption}
             onSelect={setSelectedOption}
-            onHover={playHoverSound}
           />
 
           <MenuInstructions hasStarted={hasStarted} />
@@ -105,7 +109,6 @@ export function GameUI({
           <MenuStatusIndicator show={!hasStarted} />
         </MenuContainer>
       </MenuOverlay>
-
       <MenuStyles />
     </>
   )

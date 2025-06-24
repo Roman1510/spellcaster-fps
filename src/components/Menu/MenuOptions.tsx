@@ -4,14 +4,12 @@ interface MenuOptionsProps {
   options: Array<{ label: string; action: () => void }>
   selectedOption: number
   onSelect: (index: number) => void
-  onHover: () => void
 }
 
 export function MenuOptions({
   options,
   selectedOption,
   onSelect,
-  onHover,
 }: MenuOptionsProps) {
   return (
     <div style={{ marginBottom: '20px' }}>
@@ -23,7 +21,6 @@ export function MenuOptions({
           onClick={option.action}
           onHover={() => {
             onSelect(index)
-            onHover()
           }}
         />
       ))}

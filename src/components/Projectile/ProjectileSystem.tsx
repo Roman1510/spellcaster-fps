@@ -6,6 +6,10 @@ import { useProjectileInput } from './hooks/use-projectile-input'
 import { ProjectileRenderer } from './ProjectileRenderer'
 import { ExplosionRenderer } from './ExplosionRenderer'
 import { ProjectileData } from './types/projectiles'
+import {
+  usePlayDebrisSound,
+  usePlayFireballSound,
+} from '../../store/SoundStore'
 
 export const ProjectileSystem = () => {
   const {
@@ -16,6 +20,8 @@ export const ProjectileSystem = () => {
     setProjectileRef,
   } = useProjectiles()
 
+  const playFireballSound = usePlayFireballSound()
+  const playDebrisSound = usePlayDebrisSound()
   const { explosions, createExplosion, registerGeometry } = useExplosions({
     defaultForce: 40,
     defaultRadius: 11,
@@ -31,6 +37,7 @@ export const ProjectileSystem = () => {
       const velocity = rigidBody?.linvel()
 
       if (worldPos) {
+        playDebrisSound()
         createExplosion({
           position: new Vector3(worldPos.x, worldPos.y, worldPos.z),
           velocity: velocity
@@ -39,7 +46,12 @@ export const ProjectileSystem = () => {
         })
       }
     },
-    [markProjectileImpacted, getProjectileRigidBody, createExplosion]
+    [
+      markProjectileImpacted,
+      getProjectileRigidBody,
+      createExplosion,
+      playDebrisSound,
+    ]
   )
 
   const handleProjectileCreate = useCallback(
@@ -68,10 +80,10 @@ export const ProjectileSystem = () => {
         createdAt: Date.now(),
         position: position.clone(),
       }
-
+      playFireballSound()
       addProjectile(projectileData)
     },
-    [addProjectile, handleProjectileImpact, setProjectileRef]
+    [addProjectile, handleProjectileImpact, setProjectileRef, playFireballSound]
   )
 
   useProjectileInput({ onProjectileCreate: handleProjectileCreate })

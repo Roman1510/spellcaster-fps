@@ -45,6 +45,7 @@ export const useExplosions = (config: Partial<ExplosionConfig> = {}) => {
   const [explosions, setExplosions] = useState<ExplosionEffect[]>([])
 
   const { world } = useRapier()
+
   const geometriesRef = useRef<Map<string, BufferGeometry[]>>(new Map())
   const lastCleanupRef = useRef<number>(Date.now())
   const explosionCountRef = useRef<number>(0)

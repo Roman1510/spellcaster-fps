@@ -10,6 +10,7 @@ import { LoadingScreen } from './LoadingScreen'
 import { LoadingProvider } from '../context/LoadingProvider'
 import { useLoading } from '../hooks/useLoading'
 import { ScanlineEffect } from './ScanLineEffect'
+import { useSound } from '../hooks/useSound'
 
 function CanvasContent() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -32,12 +33,13 @@ function CanvasContent() {
   const handleRestart = () => {
     canvasRef.current?.requestPointerLock()
   }
-
+  const { AudioElements } = useSound()
   return (
     <div
       className="canvas-wrapper"
       style={{ overflow: 'hidden', position: 'relative' }}
     >
+      <AudioElements />
       <div style={canvasStyle}>
         <Canvas
           ref={canvasRef}
