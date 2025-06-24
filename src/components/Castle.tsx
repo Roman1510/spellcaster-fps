@@ -86,7 +86,7 @@ interface ModelProps {
 }
 
 export function Castle(props: ModelProps = {}) {
-  const gltf = useGLTF('/castle_low_poly.glb')
+  const gltf = useGLTF('https://roman1510.github.io/files/castle_low_poly.glb')
 
   const woodMaterial = useRef(createFuturisticMaterial('#8B4513', 0.2))
   const bricksMaterial = useRef(createFuturisticMaterial('#FF69B4', 1.5))
@@ -164,4 +164,4 @@ export function Castle(props: ModelProps = {}) {
   )
 }
 
-useGLTF.preload('/castle_low_poly.glb')
+useGLTF.preload('https://roman1510.github.io/files/castle_low_poly.glb')

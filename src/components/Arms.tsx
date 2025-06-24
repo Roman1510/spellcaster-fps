@@ -15,7 +15,9 @@ export function Arms(props: any) {
   const group = useRef<Group>(null)
   const isMouseDown = useRef(false)
 
-  const gltf = useGLTF('/psx_first_person_arms.glb')
+  const gltf = useGLTF(
+    'https://roman1510.github.io/files/psx_first_person_arms.glb'
+  )
   const { nodes, materials, animations } = gltf
   const { actions } = useAnimations(animations, group)
 
@@ -125,4 +127,4 @@ export function Arms(props: any) {
     </group>
   )
 }
-useGLTF.preload('/psx_first_person_arms.glb')
+useGLTF.preload('https://roman1510.github.io/files/psx_first_person_arms.glb')
