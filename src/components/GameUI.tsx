@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useGame } from '../hooks/useGame'
+
 import { useMenuNavigation } from '../hooks/useMenuNavigation'
 import { useMenuAudio } from '../hooks/useMenuAudio'
 import { MenuOverlay } from './Menu/MenuOverlay'
@@ -11,6 +11,12 @@ import { MenuStatusIndicator } from './Menu/MenuStatusIndicator'
 import { MenuStyles } from './Menu/MenuStyles'
 import { MenuGoals } from './Menu/MenuGoals'
 import { EnergyUI } from './EnergyUI'
+import {
+  useHasStarted,
+  usePause,
+  useSetHasStarted,
+  useSetPause,
+} from '../store/GameStore'
 
 interface GameUIProps {
   onStart: () => void
@@ -25,7 +31,10 @@ export function GameUI({
   onRestart,
   gameTitle,
 }: GameUIProps) {
-  const { pause, setPause, setHasStarted, hasStarted } = useGame()
+  const pause = usePause()
+  const hasStarted = useHasStarted()
+  const setPause = useSetPause()
+  const setHasStarted = useSetHasStarted()
 
   const [selectedOption, setSelectedOption] = useState(0)
 

@@ -7,13 +7,26 @@ Source: https://sketchfab.com/3d-models/psx-first-person-arms-efd731f559a14ab48e
 Title: PSX First Person Arms
 */
 
-import { useEffect, useRef, useCallback } from 'react'
+import {
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+  useCallback,
+} from 'react'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import { Group } from 'three'
 
-export function Arms(props: any) {
+interface ArmsRef {
+  switchAnimation: (toMagic: boolean) => void
+}
+
+interface ArmsProps {
+  [key: string]: any
+}
+
+export const Arms = forwardRef<ArmsRef, ArmsProps>((props, ref) => {
   const group = useRef<Group>(null)
-  const isMouseDown = useRef(false)
 
   const gltf = useGLTF(
     'https://roman1510.github.io/files/psx_first_person_arms.glb'
@@ -42,23 +55,11 @@ export function Arms(props: any) {
     [actions]
   )
 
-  const handleMouseDown = useCallback(
-    (event: MouseEvent) => {
-      if (event.button === 0 && !isMouseDown.current) {
-        isMouseDown.current = true
-        switchAnimation(true)
-      }
-    },
-    [switchAnimation]
-  )
-
-  const handleMouseUp = useCallback(
-    (event: MouseEvent) => {
-      if (event.button === 0 && isMouseDown.current) {
-        isMouseDown.current = false
-        switchAnimation(false)
-      }
-    },
+  useImperativeHandle(
+    ref,
+    () => ({
+      switchAnimation,
+    }),
     [switchAnimation]
   )
 
@@ -67,15 +68,7 @@ export function Arms(props: any) {
     if (idleAction) {
       idleAction.play()
     }
-
-    window.addEventListener('mousedown', handleMouseDown)
-    window.addEventListener('mouseup', handleMouseUp)
-
-    return () => {
-      window.removeEventListener('mousedown', handleMouseDown)
-      window.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [actions, handleMouseDown, handleMouseUp])
+  }, [actions])
 
   return (
     <group ref={group} {...props} dispose={null}>
@@ -126,5 +119,8 @@ export function Arms(props: any) {
       </group>
     </group>
   )
-}
+})
+
+Arms.displayName = 'Arms'
+
 useGLTF.preload('https://roman1510.github.io/files/psx_first_person_arms.glb')

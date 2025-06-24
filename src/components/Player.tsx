@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import {
   CapsuleCollider,
   RapierRigidBody,
@@ -8,12 +8,42 @@ import { Mesh, Group } from 'three'
 import { Arms } from './Arms'
 import { usePlayerControl } from '../hooks/usePlayerControl'
 
+interface ArmsRef {
+  switchAnimation: (toMagic: boolean) => void
+}
+
 export function Player() {
   const ref = useRef<RapierRigidBody>(null)
   const targetRef = useRef<Mesh>(null)
   const armsRef = useRef<Group>(null)
+  const armsControlRef = useRef<ArmsRef>(null)
+  const isMouseDown = useRef(false)
 
   usePlayerControl(ref, targetRef, armsRef)
+
+  const handleMouseDown = useCallback((event: MouseEvent) => {
+    if (event.button === 0 && !isMouseDown.current && armsControlRef.current) {
+      isMouseDown.current = true
+      armsControlRef.current.switchAnimation(true)
+    }
+  }, [])
+
+  const handleMouseUp = useCallback((event: MouseEvent) => {
+    if (event.button === 0 && isMouseDown.current && armsControlRef.current) {
+      isMouseDown.current = false
+      armsControlRef.current.switchAnimation(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown)
+    window.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [handleMouseDown, handleMouseUp])
 
   return (
     <>
@@ -31,7 +61,7 @@ export function Player() {
       </RigidBody>
 
       <group ref={armsRef}>
-        <Arms />
+        <Arms ref={armsControlRef} />
       </group>
 
       <mesh ref={targetRef} visible={false}>

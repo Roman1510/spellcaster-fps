@@ -1,11 +1,11 @@
 import { useFrame } from '@react-three/fiber'
-import { useGame } from './useGame'
+import { usePause } from '../store/GameStore'
 
 export function useGameLoop(
   callback: (delta: number) => void,
   renderPriority?: number
 ) {
-  const { pause } = useGame()
+  const pause = usePause()
 
   useFrame((_state, delta) => {
     if (!pause) {

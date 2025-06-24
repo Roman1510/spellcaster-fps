@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
 import { Color, FogExp2 } from 'three'
 import { Scene } from './Scene'
-// import { Perf } from 'r3f-perf'
+
 import { Preload } from '@react-three/drei'
 import { GameUI } from './GameUI'
 import { LoadingScreen } from './LoadingScreen'

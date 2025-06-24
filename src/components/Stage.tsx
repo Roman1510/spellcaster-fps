@@ -7,10 +7,10 @@ import { ProjectileSystem } from './Projectile'
 import { Environment } from '@react-three/drei'
 import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { Suspense } from 'react'
-import { useGame } from '../hooks/useGame'
+import { usePause } from '../store/GameStore'
 
 export const Stage = () => {
-  const { pause } = useGame()
+  const pause = usePause()
 
   return (
     <>
