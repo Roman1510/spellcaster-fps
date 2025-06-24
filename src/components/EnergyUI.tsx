@@ -9,7 +9,7 @@ export const EnergyUI = ({ className = '' }: EnergyUIProps) => {
   const energy = useEnergy()
   const maxEnergy = useMaxEnergy()
   const canFire = useCanFire()
-  console.log('energy rerender')
+
   const energyPercentage = (energy / maxEnergy) * 100
   const isLowEnergy = energyPercentage < 30
   const isCriticalEnergy = energyPercentage < 15

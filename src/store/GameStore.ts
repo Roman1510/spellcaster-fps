@@ -37,7 +37,6 @@ export const useGameStore = create<GameStore>()(
       const { canFire, energy } = get()
       if (!canFire) return false
 
-      console.log('fired')
       const newEnergy = Math.max(0, energy - 50)
       set({ energy: newEnergy })
       get()._updateCanFire()
