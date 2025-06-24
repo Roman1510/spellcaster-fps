@@ -41,7 +41,6 @@ function CanvasContent() {
       <div style={canvasStyle}>
         <Canvas
           ref={canvasRef}
-          shadows
           key="canvas-game"
           dpr={0.45}
           camera={{ fov: 38 }}

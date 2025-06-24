@@ -10,6 +10,7 @@ import { MenuInstructions } from './Menu/MenuInstructions'
 import { MenuStatusIndicator } from './Menu/MenuStatusIndicator'
 import { MenuStyles } from './Menu/MenuStyles'
 import { MenuGoals } from './Menu/MenuGoals'
+import { EnergyUI } from './EnergyUI'
 
 interface GameUIProps {
   onStart: () => void
@@ -74,7 +75,7 @@ export function GameUI({
     setSelectedOption(0)
   }, [hasStarted])
 
-  if (!pause) return null
+  if (!pause) return <EnergyUI />
 
   return (
     <>
