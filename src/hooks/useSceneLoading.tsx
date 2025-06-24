@@ -61,6 +61,6 @@ export function useSceneLoading() {
       setTimeout(() => {
         setLoading(false)
       }, 250)
-    }, 1000)
+    }, 1300)
   }
 }

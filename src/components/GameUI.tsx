@@ -25,8 +25,8 @@ export function GameUI({
   onRestart,
   gameTitle,
 }: GameUIProps) {
-  const { pause, setPause } = useGame()
-  const [hasStarted, setHasStarted] = useState(false)
+  const { pause, setPause, setHasStarted, hasStarted } = useGame()
+
   const [selectedOption, setSelectedOption] = useState(0)
 
   const { playSelectSound, playHoverSound, AudioElement } = useMenuAudio()

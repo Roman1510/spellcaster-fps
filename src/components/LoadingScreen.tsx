@@ -44,7 +44,7 @@ export function LoadingScreen() {
             animation: 'pulse 1.5s ease-in-out infinite',
           }}
         >
-          CASTLE HUSTLE
+          PROJECT C.A.S.T.L.E.
         </h1>
 
         <div

@@ -5,7 +5,7 @@ interface MenuTitleProps {
 
 export function MenuTitle({
   hasStarted,
-  title = 'CASTLE HUSTLE',
+  title = 'PROJECT C.A.S.T.L.E.',
 }: MenuTitleProps) {
   return (
     <h1

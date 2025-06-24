@@ -4,6 +4,8 @@ import {
   createContext,
   useState,
   useMemo,
+  useEffect,
+  useCallback,
   PropsWithChildren,
 } from 'react'
 
@@ -16,8 +18,7 @@ export type GameContextType = {
   energy: number
   maxEnergy: number
   canFire: boolean
-  setEnergy: Dispatch<SetStateAction<number>>
-  setCanFire: Dispatch<SetStateAction<boolean>>
+  fireProjectile: () => boolean
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined)
@@ -26,8 +27,37 @@ export const GameProvider = ({ children }: PropsWithChildren) => {
   const [pause, setPause] = useState(true)
   const [hasStarted, setHasStarted] = useState(false)
   const [energy, setEnergy] = useState(100)
+
   const maxEnergy = 100
-  const [canFire, setCanFire] = useState(true)
+  const energyCost = 50
+  const rechargeRate = 16
+
+  const canFire = useMemo(
+    () => energy >= energyCost && hasStarted && !pause,
+    [energy, hasStarted, pause]
+  )
+
+  useEffect(() => {
+    if (pause || !hasStarted) return
+
+    const interval = setInterval(() => {
+      setEnergy((prevEnergy) => {
+        if (prevEnergy < maxEnergy) {
+          return Math.min(maxEnergy, prevEnergy + rechargeRate / 10)
+        }
+        return prevEnergy
+      })
+    }, 100)
+
+    return () => clearInterval(interval)
+  }, [pause, hasStarted, maxEnergy, rechargeRate])
+
+  const fireProjectile = useCallback(() => {
+    if (!canFire) return false
+    console.log('fired')
+    setEnergy((prevEnergy) => Math.max(0, prevEnergy - energyCost))
+    return true
+  }, [canFire])
 
   const contextValue = useMemo(
     () => ({
@@ -36,12 +66,11 @@ export const GameProvider = ({ children }: PropsWithChildren) => {
       hasStarted,
       setHasStarted,
       energy,
-      setEnergy,
       maxEnergy,
       canFire,
-      setCanFire,
+      fireProjectile,
     }),
-    [pause, hasStarted, canFire, energy]
+    [pause, hasStarted, energy, maxEnergy, canFire, fireProjectile]
   )
 
   return (
