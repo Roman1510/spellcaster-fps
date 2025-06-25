@@ -4,13 +4,16 @@ interface SoundStore {
   backgroundMusicRef: HTMLAudioElement | null
   fireballRef: HTMLAudioElement | null
   debrisRef: HTMLAudioElement | null
+  isMusicPlaying: boolean
 
-  setBackgroundMusicRef: (ref: HTMLAudioElement | null) => void
-  setFireballRef: (ref: HTMLAudioElement | null) => void
-  setDebrisRef: (ref: HTMLAudioElement | null) => void
+  setBackgroundMusicRef: (ref: HTMLAudioElement) => void
+  setFireballRef: (ref: HTMLAudioElement) => void
+  setDebrisRef: (ref: HTMLAudioElement) => void
 
   playBackgroundMusic: () => void
-  stopBackgroundMusic: () => void
+  pauseBackgroundMusic: () => void
+  resumeBackgroundMusic: () => void
+  restartBackgroundMusic: () => void
   playFireballSound: () => void
   playDebrisSound: () => void
 }
@@ -19,6 +22,7 @@ export const useSoundStore = create<SoundStore>((set, get) => ({
   backgroundMusicRef: null,
   fireballRef: null,
   debrisRef: null,
+  isMusicPlaying: false,
 
   setBackgroundMusicRef: (ref) => set({ backgroundMusicRef: ref }),
   setFireballRef: (ref) => set({ fireballRef: ref }),
@@ -27,18 +31,33 @@ export const useSoundStore = create<SoundStore>((set, get) => ({
   playBackgroundMusic: () => {
     const { backgroundMusicRef } = get()
     if (backgroundMusicRef) {
-      backgroundMusicRef.currentTime = 0
-      backgroundMusicRef.loop = true
-      backgroundMusicRef.volume = 0.4
-      backgroundMusicRef.play().catch(() => {})
+      backgroundMusicRef.play().catch(console.error)
+      set({ isMusicPlaying: true })
     }
   },
 
-  stopBackgroundMusic: () => {
+  pauseBackgroundMusic: () => {
+    const { backgroundMusicRef } = get()
+    if (backgroundMusicRef && !backgroundMusicRef.paused) {
+      backgroundMusicRef.pause()
+      set({ isMusicPlaying: false })
+    }
+  },
+
+  resumeBackgroundMusic: () => {
+    const { backgroundMusicRef } = get()
+    if (backgroundMusicRef && backgroundMusicRef.paused) {
+      backgroundMusicRef.play().catch(console.error)
+      set({ isMusicPlaying: true })
+    }
+  },
+
+  restartBackgroundMusic: () => {
     const { backgroundMusicRef } = get()
     if (backgroundMusicRef) {
-      backgroundMusicRef.pause()
       backgroundMusicRef.currentTime = 0
+      backgroundMusicRef.play().catch(console.error)
+      set({ isMusicPlaying: true })
     }
   },
 
@@ -55,17 +74,8 @@ export const useSoundStore = create<SoundStore>((set, get) => ({
     const { debrisRef } = get()
     if (debrisRef) {
       debrisRef.currentTime = 0
-      debrisRef.volume = 0.5
+      debrisRef.volume = 0.25
       debrisRef.play().catch(() => {})
     }
   },
 }))
-
-export const usePlayBackgroundMusic = () =>
-  useSoundStore((state) => state.playBackgroundMusic)
-export const useStopBackgroundMusic = () =>
-  useSoundStore((state) => state.stopBackgroundMusic)
-export const usePlayFireballSound = () =>
-  useSoundStore((state) => state.playFireballSound)
-export const usePlayDebrisSound = () =>
-  useSoundStore((state) => state.playDebrisSound)

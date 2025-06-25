@@ -3,15 +3,14 @@ import { InstancedRigidBodies } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-//too lazy to change this
 const colors = [
   '#00ff00',
-  '#00ff00',
-  '#00ff00',
-  '#00ff00',
-  '#00ff00',
-  '#00ff00',
-  '#00ff00',
+  '#ffff00',
+  '#ff8800',
+  '#ff0000',
+  '#8800ff',
+  '#0088ff',
+  '#00ffff',
 ]
 
 type BrickInstance = {
@@ -19,6 +18,7 @@ type BrickInstance = {
   position: [number, number, number]
   rotation: [number, number, number]
   color: string
+  wallIndex: number
 }
 
 type Particle = {
@@ -27,136 +27,148 @@ type Particle = {
   target: THREE.Vector3
   color: string
   originalIndex: number
+  wallIndex: number
 }
 
-export const BrickWall = () => {
+type WallPosition = {
+  x: number
+  y: number
+  z: number
+}
+
+interface TowerProps {
+  wallPositions?: WallPosition[]
+}
+
+export const Tower = ({
+  wallPositions = [{ x: 0, y: 0, z: 0 }],
+}: TowerProps) => {
   const [isParticleMode, setIsParticleMode] = useState(false)
   const [isRebuilding, setIsRebuilding] = useState(false)
   const particlesRef = useRef<Particle[]>([])
   const particleMeshRefs = useRef<Record<string, THREE.InstancedMesh>>({})
 
-  const numRows = 15
-  const numColumns = 10
-  const boxSize = 1
+  const numRows = 6
+  const numColumns = 4
+  const numDepth = 2
+  const boxSize = 2
+  const bricksPerTower = numRows * numColumns * numDepth
 
   const { instances, materials } = useMemo(() => {
     const brickInstances: BrickInstance[] = []
     const materialMap: Record<string, THREE.MeshBasicMaterial> = {}
 
     colors.forEach((color) => {
-      materialMap[color] = new THREE.MeshBasicMaterial({
-        color,
-      })
+      materialMap[color] = new THREE.MeshBasicMaterial({ color })
     })
 
     let instanceId = 0
 
-    for (let row = 0; row < numRows; row++) {
-      for (let col = 0; col < numColumns; col++) {
+    wallPositions.forEach((wallPos, wallIndex) => {
+      for (let i = 0; i < bricksPerTower; i++) {
+        const depth = Math.floor(i / (numRows * numColumns))
+        const row = Math.floor((i % (numRows * numColumns)) / numColumns)
+        const col = i % numColumns
+
         const randomColor = colors[Math.floor(Math.random() * colors.length)]
 
         brickInstances.push({
           key: instanceId++,
           position: [
-            col * boxSize - (numColumns * boxSize) / 2 + boxSize / 2,
-            row * boxSize + boxSize / 2,
-            -20,
+            wallPos.x +
+              (col * boxSize - (numColumns * boxSize) / 2 + boxSize / 2),
+            wallPos.y + (row * boxSize + boxSize / 2),
+            wallPos.z +
+              (depth * boxSize - (numDepth * boxSize) / 2 + boxSize / 2),
           ],
           rotation: [0, 0, 0],
           color: randomColor,
+          wallIndex,
         })
       }
-    }
+    })
 
     return { instances: brickInstances, materials: materialMap }
-  }, [numRows, numColumns, boxSize])
+  }, [wallPositions, bricksPerTower])
 
   const groupedByColor = useMemo(() => {
     const groups: Record<string, BrickInstance[]> = {}
 
-    instances.forEach((instance) => {
-      if (!groups[instance.color]) {
-        groups[instance.color] = []
-      }
-      groups[instance.color].push(instance)
-    })
+    instances.forEach((instance) =>
+      (groups[instance.color] ??= []).push(instance)
+    )
 
     return groups
   }, [instances])
 
-  const createParticles = () => {
-    const particles: Particle[] = []
+  const createParticles = useMemo(() => {
+    return () => {
+      const particles: Particle[] = []
 
-    instances.forEach((instance, index) => {
-      const startPos = new THREE.Vector3(
-        instance.position[0] + (Math.random() - 0.5) * 20,
-        instance.position[1] + Math.random() * 10 + 5,
-        instance.position[2] + (Math.random() - 0.5) * 20
-      )
+      instances.forEach((instance, index) => {
+        const startPos = new THREE.Vector3(
+          instance.position[0] + (Math.random() - 0.5) * 30,
+          instance.position[1] + Math.random() * 15 + 10,
+          instance.position[2] + (Math.random() - 0.5) * 30
+        )
 
-      particles.push({
-        position: startPos.clone(),
-        velocity: new THREE.Vector3(),
-        target: new THREE.Vector3(...instance.position),
-        color: instance.color,
-        originalIndex: index,
+        particles.push({
+          position: startPos,
+          velocity: new THREE.Vector3(),
+          target: new THREE.Vector3(...instance.position),
+          color: instance.color,
+          originalIndex: index,
+          wallIndex: instance.wallIndex,
+        })
       })
-    })
 
-    particlesRef.current = particles
-  }
+      particlesRef.current = particles
+    }
+  }, [instances])
 
   const particlesByColor = useMemo(() => {
     if (!isParticleMode) return {}
 
     const groups: Record<string, Particle[]> = {}
-    particlesRef.current.forEach((particle) => {
-      if (!groups[particle.color]) {
-        groups[particle.color] = []
-      }
-      groups[particle.color].push(particle)
-    })
+    particlesRef.current.forEach((particle) =>
+      (groups[particle.color] ??= []).push(particle)
+    )
     return groups
-  }, [isParticleMode, particlesRef.current])
+  }, [isParticleMode])
 
-  useFrame((_state, delta) => {
+  useFrame((_, delta) => {
     if (!isParticleMode) return
 
     let allReached = true
+    const particles = particlesRef.current
 
-    particlesRef.current.forEach((particle) => {
+    for (let i = 0; i < particles.length; i++) {
+      const particle = particles[i]
       const distance = particle.position.distanceTo(particle.target)
 
-      if (distance > 0.1) {
+      if (distance > 0.2) {
         allReached = false
 
         const direction = particle.target
           .clone()
           .sub(particle.position)
           .normalize()
-        const force = direction.multiplyScalar(15 * delta)
-        particle.velocity.add(force)
-
+        particle.velocity.add(direction.multiplyScalar(20 * delta))
         particle.velocity.multiplyScalar(0.95)
-
         particle.position.add(particle.velocity.clone().multiplyScalar(delta))
       } else {
         particle.position.copy(particle.target)
         particle.velocity.set(0, 0, 0)
       }
-    })
+    }
 
+    const matrix = new THREE.Matrix4()
     Object.entries(particlesByColor).forEach(([color, colorParticles]) => {
       const meshRef = particleMeshRefs.current[color]
       if (!meshRef) return
 
-      const matrix = new THREE.Matrix4()
       colorParticles.forEach((particle, index) => {
-        matrix.makeTranslation(
-          particle.position.x,
-          particle.position.y,
-          particle.position.z
-        )
+        matrix.setPosition(particle.position)
         meshRef.setMatrixAt(index, matrix)
       })
       meshRef.instanceMatrix.needsUpdate = true
@@ -170,6 +182,8 @@ export const BrickWall = () => {
     }
   })
 
+  useEffect(() => {}, [])
+
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() === 'f' && !isRebuilding) {
@@ -181,28 +195,15 @@ export const BrickWall = () => {
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [isRebuilding])
+  }, [isRebuilding, createParticles])
 
-  const geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), [])
-  const particleGeometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), [])
+  const geometry = useMemo(
+    () => new THREE.BoxGeometry(boxSize, boxSize, boxSize),
+    [boxSize]
+  )
 
   return (
     <>
-      <directionalLight
-        position={[-10, 15, 5]}
-        target-position={[0, 6, -20]}
-        intensity={0.9}
-        color="#9966CC"
-        shadow-mapSize-width={512}
-        shadow-mapSize-height={512}
-        shadow-camera-far={25}
-        shadow-camera-left={-8}
-        shadow-camera-right={8}
-        shadow-camera-top={8}
-        shadow-camera-bottom={-2}
-      />
-
-      {/* Particle Mode - Colored cubes flying back */}
       {isParticleMode &&
         Object.entries(particlesByColor).map(([color, colorParticles]) => (
           <instancedMesh
@@ -210,24 +211,23 @@ export const BrickWall = () => {
             ref={(ref) => {
               if (ref) particleMeshRefs.current[color] = ref
             }}
-            args={[particleGeometry, materials[color], colorParticles.length]}
+            args={[geometry, materials[color], colorParticles.length]}
           />
         ))}
 
-      {/* Normal Wall Mode */}
       {!isParticleMode &&
         Object.entries(groupedByColor).map(([color, colorInstances]) => (
           <InstancedRigidBodies
             key={color}
             instances={colorInstances}
-            mass={6}
-            gravityScale={0.9}
+            mass={0.7}
+            gravityScale={0.8}
             colliders="cuboid"
-            friction={0.8}
+            friction={0.7}
             restitution={0.01}
             canSleep={true}
             linearDamping={2.0}
-            angularDamping={2.0}
+            angularDamping={1.0}
           >
             <instancedMesh
               frustumCulled={false}
@@ -239,4 +239,4 @@ export const BrickWall = () => {
   )
 }
 
-export default BrickWall
+export default Tower

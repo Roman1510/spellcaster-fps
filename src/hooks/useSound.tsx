@@ -15,8 +15,14 @@ export function useSound() {
   const playBackgroundMusic = useSoundStore(
     (state) => state.playBackgroundMusic
   )
-  const stopBackgroundMusic = useSoundStore(
-    (state) => state.stopBackgroundMusic
+  const pauseBackgroundMusic = useSoundStore(
+    (state) => state.pauseBackgroundMusic
+  )
+  const resumeBackgroundMusic = useSoundStore(
+    (state) => state.resumeBackgroundMusic
+  )
+  const restartBackgroundMusic = useSoundStore(
+    (state) => state.restartBackgroundMusic
   )
   const playFireballSound = useSoundStore((state) => state.playFireballSound)
   const playDebrisSound = useSoundStore((state) => state.playDebrisSound)
@@ -35,7 +41,7 @@ export function useSound() {
 
   const AudioElements = () => (
     <>
-      <audio ref={backgroundMusicRef} preload="auto">
+      <audio ref={backgroundMusicRef} preload="auto" loop>
         <source
           src="https://roman1510.github.io/files/dark-synthwave.mp3"
           type="audio/mpeg"
@@ -60,7 +66,9 @@ export function useSound() {
 
   return {
     playBackgroundMusic,
-    stopBackgroundMusic,
+    pauseBackgroundMusic,
+    resumeBackgroundMusic,
+    restartBackgroundMusic,
     playFireballSound,
     playDebrisSound,
     AudioElements,

@@ -13,6 +13,8 @@ const playerPosition = new Vector3()
 const BASE_SPEED_MULTIPLIER = 12
 const DASH_SPEED_MULTIPLIER = 35
 const JUMP_VELOCITY = 10
+// const DASH_SPEED_MULTIPLIER = 150
+// const JUMP_VELOCITY = 60
 const EYE_LEVEL_OFFSET = 2
 
 export const usePlayerControl = (
@@ -23,12 +25,11 @@ export const usePlayerControl = (
   const [, get] = useKeyboardControls()
   const hasSetInitialRotation = useRef(false)
 
-  // Simple grounded check using velocity
   const isGrounded = () => {
     if (!ref.current) return false
 
     const velocity = ref.current.linvel()
-    // If Y velocity is very small, we're likely on the ground
+
     return Math.abs(velocity.y) < 0.1
   }
 
@@ -56,7 +57,6 @@ export const usePlayerControl = (
         .multiplyScalar(dash ? DASH_SPEED_MULTIPLIER : BASE_SPEED_MULTIPLIER)
         .applyQuaternion(state.camera.quaternion)
 
-      // Check if grounded using velocity
       const groundedCheck = isGrounded()
 
       const yVelocity = jump && groundedCheck ? JUMP_VELOCITY : velocity.y

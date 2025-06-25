@@ -32,6 +32,7 @@ export function GameUI({
   onRestart,
   gameTitle,
 }: GameUIProps) {
+  const { restartBackgroundMusic } = useSound()
   const pause = usePause()
   const hasStarted = useHasStarted()
   const setPause = useSetPause()
@@ -39,7 +40,7 @@ export function GameUI({
 
   const [selectedOption, setSelectedOption] = useState(0)
 
-  const { playBackgroundMusic, stopBackgroundMusic } = useSound()
+  const { playBackgroundMusic, pauseBackgroundMusic } = useSound()
 
   const handleStart = () => {
     setHasStarted(true)
@@ -57,15 +58,15 @@ export function GameUI({
   const handleRestart = () => {
     setHasStarted(true)
     setPause(false)
-    playBackgroundMusic()
+    restartBackgroundMusic()
     onRestart()
   }
 
   useEffect(() => {
     if (pause && hasStarted) {
-      stopBackgroundMusic()
+      pauseBackgroundMusic()
     }
-  }, [pause, hasStarted, stopBackgroundMusic])
+  }, [pause, hasStarted, pauseBackgroundMusic])
 
   const getMenuOptions = () => {
     if (!hasStarted) {

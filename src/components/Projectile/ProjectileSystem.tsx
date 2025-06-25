@@ -6,10 +6,7 @@ import { useProjectileInput } from './hooks/use-projectile-input'
 import { ProjectileRenderer } from './ProjectileRenderer'
 import { ExplosionRenderer } from './ExplosionRenderer'
 import { ProjectileData } from './types/projectiles'
-import {
-  usePlayDebrisSound,
-  usePlayFireballSound,
-} from '../../store/SoundStore'
+import { useSoundStore } from '../../store/SoundStore'
 
 export const ProjectileSystem = () => {
   const {
@@ -20,8 +17,7 @@ export const ProjectileSystem = () => {
     setProjectileRef,
   } = useProjectiles()
 
-  const playFireballSound = usePlayFireballSound()
-  const playDebrisSound = usePlayDebrisSound()
+  const { playFireballSound, playDebrisSound } = useSoundStore()
   const { explosions, createExplosion, registerGeometry } = useExplosions({
     defaultForce: 40,
     defaultRadius: 11,
