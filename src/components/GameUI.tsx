@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useMenuNavigation } from '../hooks/useMenuNavigation'
-import { useSound } from '../hooks/useSound' // Updated import
+import { useSound } from '../hooks/useSound'
 import { MenuOverlay } from './Menu/MenuOverlay'
 import { MenuContainer } from './Menu/MenuContainer'
 import { MenuTitle } from './Menu/MenuTitle'
@@ -11,13 +11,14 @@ import { MenuStatusIndicator } from './Menu/MenuStatusIndicator'
 import { MenuStyles } from './Menu/MenuStyles'
 import { MenuGoals } from './Menu/MenuGoals'
 import { EnergyUI } from './EnergyUI'
-// Use individual hooks instead of the compound hook
+import { GameTimer } from './GameTimer'
 import {
   usePause,
   useHasStarted,
   useSetPause,
   useSetHasStarted,
 } from '../store/GameStore'
+import { useStartTimer, useStopTimer, useResetTimer } from '../store/TimeStore'
 
 interface GameUIProps {
   onStart: () => void
@@ -38,11 +39,24 @@ export function GameUI({
   const setPause = useSetPause()
   const setHasStarted = useSetHasStarted()
 
+  const startTimer = useStartTimer()
+  const stopTimer = useStopTimer()
+  const resetTimer = useResetTimer()
+
   const [selectedOption, setSelectedOption] = useState(0)
 
   const { playBackgroundMusic, pauseBackgroundMusic } = useSound()
 
+  useEffect(() => {
+    if (hasStarted && !pause) {
+      startTimer()
+    } else {
+      stopTimer()
+    }
+  }, [hasStarted, pause, startTimer, stopTimer])
+
   const handleStart = () => {
+    resetTimer()
     setHasStarted(true)
     setPause(false)
     playBackgroundMusic()
@@ -56,6 +70,7 @@ export function GameUI({
   }
 
   const handleRestart = () => {
+    resetTimer()
     setHasStarted(true)
     setPause(false)
     restartBackgroundMusic()
@@ -92,7 +107,14 @@ export function GameUI({
     setSelectedOption(0)
   }, [hasStarted])
 
-  if (!pause) return <EnergyUI />
+  if (!pause) {
+    return (
+      <>
+        <EnergyUI />
+        <GameTimer />
+      </>
+    )
+  }
 
   return (
     <>

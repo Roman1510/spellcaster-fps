@@ -8,6 +8,8 @@ interface GameStore {
   setPause: (pause: boolean) => void
   hasStarted: boolean
   setHasStarted: (hasStarted: boolean) => void
+  gameOver: boolean
+  endGame: () => void
 
   energy: number
   maxEnergy: number
@@ -27,7 +29,12 @@ export const useGameStore = create<GameStore>()(
     },
     hasStarted: false,
     setHasStarted: (hasStarted) => {
-      set({ hasStarted })
+      set({ hasStarted, gameOver: false })
+      get()._updateCanFire()
+    },
+    gameOver: false,
+    endGame: () => {
+      set({ gameOver: true, pause: true })
       get()._updateCanFire()
     },
 
@@ -65,28 +72,8 @@ export const useGameStore = create<GameStore>()(
 let rechargeInterval: number | null = null
 
 useGameStore.subscribe(
-  (state) => state.pause,
-  (pause) => {
-    const { hasStarted } = useGameStore.getState()
-
-    if (rechargeInterval) {
-      clearInterval(rechargeInterval)
-      rechargeInterval = null
-    }
-
-    if (!pause && hasStarted) {
-      rechargeInterval = setInterval(() => {
-        useGameStore.getState()._rechargeEnergy()
-      }, 100)
-    }
-  }
-)
-
-useGameStore.subscribe(
-  (state) => state.hasStarted,
-  (hasStarted) => {
-    const { pause } = useGameStore.getState()
-
+  (state) => ({ pause: state.pause, hasStarted: state.hasStarted }),
+  ({ pause, hasStarted }) => {
     if (rechargeInterval) {
       clearInterval(rechargeInterval)
       rechargeInterval = null
@@ -110,3 +97,5 @@ export const useMaxEnergy = () => useGameStore((state) => state.maxEnergy)
 export const useCanFire = () => useGameStore((state) => state.canFire)
 export const useFireProjectile = () =>
   useGameStore((state) => state.fireProjectile)
+export const useGameOver = () => useGameStore((state) => state.gameOver)
+export const useEndGame = () => useGameStore((state) => state.endGame)

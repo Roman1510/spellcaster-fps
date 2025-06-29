@@ -13,7 +13,6 @@ export function Scene({ canvasRef }: ISceneProps) {
   const setPause = useSetPause()
   const pause = usePause()
   useSceneLoading()
-
   return (
     <>
       <>

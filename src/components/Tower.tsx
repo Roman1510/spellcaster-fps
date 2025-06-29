@@ -1,7 +1,13 @@
 import { useMemo, useRef, useEffect, useState } from 'react'
 import { InstancedRigidBodies } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
+import {
+  BoxGeometry,
+  InstancedMesh,
+  Matrix4,
+  MeshBasicMaterial,
+  Vector3,
+} from 'three'
 
 const colors = [
   '#00ff00',
@@ -22,9 +28,9 @@ type BrickInstance = {
 }
 
 type Particle = {
-  position: THREE.Vector3
-  velocity: THREE.Vector3
-  target: THREE.Vector3
+  position: Vector3
+  velocity: Vector3
+  target: Vector3
   color: string
   originalIndex: number
   wallIndex: number
@@ -46,20 +52,20 @@ export const Tower = ({
   const [isParticleMode, setIsParticleMode] = useState(false)
   const [isRebuilding, setIsRebuilding] = useState(false)
   const particlesRef = useRef<Particle[]>([])
-  const particleMeshRefs = useRef<Record<string, THREE.InstancedMesh>>({})
+  const particleMeshRefs = useRef<Record<string, InstancedMesh>>({})
 
-  const numRows = 6
-  const numColumns = 4
-  const numDepth = 2
+  const numRows = 7
+  const numColumns = 3
+  const numDepth = 3
   const boxSize = 2
   const bricksPerTower = numRows * numColumns * numDepth
 
   const { instances, materials } = useMemo(() => {
     const brickInstances: BrickInstance[] = []
-    const materialMap: Record<string, THREE.MeshBasicMaterial> = {}
+    const materialMap: Record<string, MeshBasicMaterial> = {}
 
     colors.forEach((color) => {
-      materialMap[color] = new THREE.MeshBasicMaterial({ color })
+      materialMap[color] = new MeshBasicMaterial({ color })
     })
 
     let instanceId = 0
@@ -106,7 +112,7 @@ export const Tower = ({
       const particles: Particle[] = []
 
       instances.forEach((instance, index) => {
-        const startPos = new THREE.Vector3(
+        const startPos = new Vector3(
           instance.position[0] + (Math.random() - 0.5) * 30,
           instance.position[1] + Math.random() * 15 + 10,
           instance.position[2] + (Math.random() - 0.5) * 30
@@ -114,8 +120,8 @@ export const Tower = ({
 
         particles.push({
           position: startPos,
-          velocity: new THREE.Vector3(),
-          target: new THREE.Vector3(...instance.position),
+          velocity: new Vector3(),
+          target: new Vector3(...instance.position),
           color: instance.color,
           originalIndex: index,
           wallIndex: instance.wallIndex,
@@ -162,7 +168,7 @@ export const Tower = ({
       }
     }
 
-    const matrix = new THREE.Matrix4()
+    const matrix = new Matrix4()
     Object.entries(particlesByColor).forEach(([color, colorParticles]) => {
       const meshRef = particleMeshRefs.current[color]
       if (!meshRef) return
@@ -198,7 +204,7 @@ export const Tower = ({
   }, [isRebuilding, createParticles])
 
   const geometry = useMemo(
-    () => new THREE.BoxGeometry(boxSize, boxSize, boxSize),
+    () => new BoxGeometry(boxSize, boxSize, boxSize),
     [boxSize]
   )
 
@@ -220,13 +226,13 @@ export const Tower = ({
           <InstancedRigidBodies
             key={color}
             instances={colorInstances}
-            mass={0.7}
+            mass={0.5}
             gravityScale={0.8}
             colliders="cuboid"
             friction={0.7}
             restitution={0.01}
             canSleep={true}
-            linearDamping={2.0}
+            linearDamping={1.0}
             angularDamping={1.0}
           >
             <instancedMesh

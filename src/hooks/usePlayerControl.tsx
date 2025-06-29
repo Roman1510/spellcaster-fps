@@ -10,8 +10,8 @@ const sideVector = new Vector3()
 const targetOffset = new Vector3()
 const playerPosition = new Vector3()
 
-const BASE_SPEED_MULTIPLIER = 12
-const DASH_SPEED_MULTIPLIER = 35
+const BASE_SPEED_MULTIPLIER = 20
+const DASH_SPEED_MULTIPLIER = 38
 const JUMP_VELOCITY = 10
 // const DASH_SPEED_MULTIPLIER = 150
 // const JUMP_VELOCITY = 60
@@ -37,6 +37,9 @@ export const usePlayerControl = (
     // Small hack :D
     if (!hasSetInitialRotation.current) {
       state.camera.rotation.y = -Math.PI / 2
+      state.camera.updateMatrix()
+      state.camera.updateMatrixWorld(true)
+      state.camera.updateProjectionMatrix()
       hasSetInitialRotation.current = true
     }
 
@@ -48,7 +51,7 @@ export const usePlayerControl = (
 
       const eyeLevelPosition = new Vector3(x, y + EYE_LEVEL_OFFSET, z)
       state.camera.position.copy(eyeLevelPosition)
-
+      state.camera.updateMatrixWorld(true)
       frontVector.set(0, 0, +backward - +forward)
       sideVector.set(+left - +right, 0, 0)
       direction
