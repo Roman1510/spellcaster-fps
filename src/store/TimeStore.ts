@@ -12,12 +12,12 @@ interface TimerStore {
 
 export const useTimerStore = create<TimerStore>()(
   subscribeWithSelector((set, get) => ({
-    timeRemaining: 10,
+    timeRemaining: 60,
     isRunning: false,
 
     start: () => set({ isRunning: true }),
     stop: () => set({ isRunning: false }),
-    reset: () => set({ timeRemaining: 10, isRunning: false }),
+    reset: () => set({ timeRemaining: 60, isRunning: false }),
 
     tick: () => {
       const { timeRemaining, isRunning } = get()

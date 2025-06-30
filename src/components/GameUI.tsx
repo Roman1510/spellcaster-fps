@@ -19,6 +19,7 @@ import {
   useSetHasStarted,
 } from '../store/GameStore'
 import { useStartTimer, useStopTimer, useResetTimer } from '../store/TimeStore'
+// import TowerStatusUI from './TowerStatus'
 
 interface GameUIProps {
   onStart: () => void
@@ -110,6 +111,7 @@ export function GameUI({
   if (!pause) {
     return (
       <>
+        {/* <TowerStatusUI /> */}
         <EnergyUI />
         <GameTimer />
       </>
