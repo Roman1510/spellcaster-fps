@@ -67,7 +67,7 @@ export const useTowerStore = create<TowerStore>()(
           Math.floor((newFallenBricks.size / tower.totalBricks) * 100)
         )
 
-        const isNowDestroyed = demolitionPercent >= 22 //just because it's ok number :D
+        const isNowDestroyed = demolitionPercent >= 12 //just because it's ok number :D
 
         towers[towerIndex] = {
           ...tower,

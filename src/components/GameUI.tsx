@@ -19,6 +19,7 @@ import {
   useSetHasStarted,
 } from '../store/GameStore'
 import { useStartTimer, useStopTimer, useResetTimer } from '../store/TimeStore'
+import Win from './Win'
 // import TowerStatusUI from './TowerStatus'
 
 interface GameUIProps {
@@ -31,10 +32,9 @@ interface GameUIProps {
 export function GameUI({
   onStart,
   onContinue,
-  onRestart,
+
   gameTitle,
 }: GameUIProps) {
-  const { restartBackgroundMusic } = useSound()
   const pause = usePause()
   const hasStarted = useHasStarted()
   const setPause = useSetPause()
@@ -70,14 +70,6 @@ export function GameUI({
     onContinue()
   }
 
-  const handleRestart = () => {
-    resetTimer()
-    setHasStarted(true)
-    setPause(false)
-    restartBackgroundMusic()
-    onRestart()
-  }
-
   useEffect(() => {
     if (pause && hasStarted) {
       pauseBackgroundMusic()
@@ -88,10 +80,7 @@ export function GameUI({
     if (!hasStarted) {
       return [{ label: 'START', action: handleStart }]
     }
-    return [
-      { label: 'CONTINUE', action: handleContinue },
-      { label: 'RESTART', action: handleRestart },
-    ]
+    return [{ label: 'CONTINUE', action: handleContinue }]
   }
 
   const menuOptions = getMenuOptions()
@@ -112,6 +101,7 @@ export function GameUI({
     return (
       <>
         {/* <TowerStatusUI /> */}
+        <Win />
         <EnergyUI />
         <GameTimer />
       </>

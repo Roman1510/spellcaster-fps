@@ -29,7 +29,6 @@ export const Stage = () => {
     []
   )
 
-  // Initialize towers in the store
   useEffect(() => {
     const bricksPerTower = 7 * 3 * 3 // numRows * numColumns * numDepth
     initializeTowers(towerPositions, bricksPerTower)

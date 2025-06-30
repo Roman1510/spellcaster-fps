@@ -15,6 +15,7 @@ import {
   useResetTowers,
 } from '../store/TowerStore'
 import { useResetTimer, useStartTimer } from '../store/TimeStore'
+import { useSound } from '../hooks/useSound'
 
 const colors = [
   '#00ff00',
@@ -72,6 +73,7 @@ const SingleTower = ({
   const resetTowers = useResetTowers()
   const resetTimer = useResetTimer()
   const startTimer = useStartTimer()
+  const { restartBackgroundMusic } = useSound()
   const towers = useTowers()
   const isDestroyed = towers.find((t) => t.id === towerId)?.isDestroyed || false
   const particlesRef = useRef<Particle[]>([])
@@ -283,6 +285,7 @@ const SingleTower = ({
         rebuildStabilization.current = true
         setTimeout(() => {
           startTimer()
+
           rebuildStabilization.current = false
         }, 1000)
 
@@ -315,7 +318,7 @@ const SingleTower = ({
 
         resetTowers()
         resetTimer()
-
+        restartBackgroundMusic()
         setIsRebuilding(true)
         createParticles()
         setIsParticleMode(true)
@@ -331,6 +334,7 @@ const SingleTower = ({
     resetTowers,
     resetTimer,
     startTimer,
+    restartBackgroundMusic,
   ])
 
   return (
