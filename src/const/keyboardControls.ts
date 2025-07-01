@@ -1,9 +1,15 @@
-export const keyboardControls = [
-  { name: 'forward', keys: ['ArrowUp', 'w', 'W', 'z', 'Z'] },
-  { name: 'backward', keys: ['ArrowDown', 's', 'S'] },
-  { name: 'left', keys: ['ArrowLeft', 'a', 'A', 'q', 'Q'] },
-  { name: 'right', keys: ['ArrowRight', 'd', 'D'] },
-  { name: 'dash', keys: ['Shift'] },
-  { name: 'take', keys: ['E', 'e'] },
-  { name: 'jump', keys: ['Space'] },
-]
+export const physicalKeyboardControls = {
+  forward: 'KeyW',
+  backward: 'KeyS',
+  left: 'KeyA',
+  right: 'KeyD',
+  dash: 'ShiftLeft',
+  dashAlt: 'ShiftRight',
+  take: 'KeyE',
+  jump: 'Space',
+
+  forwardAlt: 'ArrowUp',
+  backwardAlt: 'ArrowDown',
+  leftAlt: 'ArrowLeft',
+  rightAlt: 'ArrowRight',
+}

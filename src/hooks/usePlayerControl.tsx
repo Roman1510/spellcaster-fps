@@ -1,5 +1,4 @@
 import { useFrame } from '@react-three/fiber'
-import { useKeyboardControls } from '@react-three/drei'
 import { RefObject, useRef } from 'react'
 import { Vector3, Mesh, Group } from 'three'
 import { RapierRigidBody } from '@react-three/rapier'
@@ -13,16 +12,25 @@ const playerPosition = new Vector3()
 const BASE_SPEED_MULTIPLIER = 20
 const DASH_SPEED_MULTIPLIER = 38
 const JUMP_VELOCITY = 10
-// const DASH_SPEED_MULTIPLIER = 150
-// const JUMP_VELOCITY = 60
 const EYE_LEVEL_OFFSET = 2
+
+const getMovementState = (keys: { [key: string]: boolean }) => {
+  return {
+    forward: keys['KeyW'] || keys['ArrowUp'] || false,
+    backward: keys['KeyS'] || keys['ArrowDown'] || false,
+    left: keys['KeyA'] || keys['ArrowLeft'] || false,
+    right: keys['KeyD'] || keys['ArrowRight'] || false,
+    dash: keys['ShiftLeft'] || keys['ShiftRight'] || false,
+    jump: keys['Space'] || false,
+  }
+}
 
 export const usePlayerControl = (
   ref: RefObject<RapierRigidBody | null>,
   targetRef: RefObject<Mesh | null>,
-  armsRef: RefObject<Group | null>
+  armsRef: RefObject<Group | null>,
+  keys: { [key: string]: boolean } // Add keys parameter
 ) => {
-  const [, get] = useKeyboardControls()
   const hasSetInitialRotation = useRef(false)
 
   const isGrounded = () => {
@@ -44,7 +52,8 @@ export const usePlayerControl = (
     }
 
     if (ref.current) {
-      const { forward, backward, left, right, dash, jump } = get()
+      const { forward, backward, left, right, dash, jump } =
+        getMovementState(keys)
 
       const velocity = ref.current.linvel()
       const { x, y, z } = ref.current.translation()
@@ -98,9 +107,9 @@ export const usePlayerControl = (
 export const usePlayerControlWithDebug = (
   ref: RefObject<RapierRigidBody | null>,
   targetRef: RefObject<Mesh | null>,
-  armsRef: RefObject<Group | null>
+  armsRef: RefObject<Group | null>,
+  keys: { [key: string]: boolean } // Add keys parameter
 ) => {
-  const [, get] = useKeyboardControls()
   const hasSetInitialRotation = useRef(false)
 
   const isGrounded = () => {
@@ -119,7 +128,8 @@ export const usePlayerControlWithDebug = (
     }
 
     if (ref.current) {
-      const { forward, backward, left, right, dash, jump } = get()
+      const { forward, backward, left, right, dash, jump } =
+        getMovementState(keys)
 
       const velocity = ref.current.linvel()
       const { x, y, z } = ref.current.translation()

@@ -8,6 +8,7 @@ import { Mesh, Group } from 'three'
 import { Arms } from './Arms'
 import { usePlayerControl } from '../hooks/usePlayerControl'
 import { useCanFire } from '../store/GameStore'
+import { usePhysicalKeyboard } from '../hooks/usePhysicalKeyboard'
 
 interface ArmsRef {
   switchAnimation: (toMagic: boolean) => void
@@ -20,7 +21,8 @@ export function Player() {
   const armsControlRef = useRef<ArmsRef>(null)
   const isMouseDown = useRef(false)
   const canFire = useCanFire()
-  usePlayerControl(ref, targetRef, armsRef)
+  const keys = usePhysicalKeyboard()
+  usePlayerControl(ref, targetRef, armsRef, keys)
 
   const handleMouseDown = useCallback(
     (event: MouseEvent) => {

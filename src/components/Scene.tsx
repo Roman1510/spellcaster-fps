@@ -1,7 +1,7 @@
-import { KeyboardControls, PointerLockControls } from '@react-three/drei'
+import { PointerLockControls } from '@react-three/drei'
 import { Stage } from './Stage'
 import { RefObject, Suspense } from 'react'
-import { keyboardControls } from '../const/keyboardControls'
+// import { keyboardControls } from '../const/keyboardControls'
 import { useSceneLoading } from '../hooks/useSceneLoading'
 import { usePause, useSetPause } from '../store/GameStore'
 
@@ -13,13 +13,14 @@ export function Scene({ canvasRef }: ISceneProps) {
   const setPause = useSetPause()
   const pause = usePause()
   useSceneLoading()
+
   return (
     <>
       <>
         <Suspense fallback={null}>
-          <KeyboardControls map={keyboardControls}>
-            <Stage key="main-stage" />
-          </KeyboardControls>
+          {/* <KeyboardControls map={keyboardControls}> */}
+          <Stage key="main-stage" />
+          {/* </KeyboardControls> */}
         </Suspense>
       </>
 
