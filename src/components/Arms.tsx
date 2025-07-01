@@ -16,6 +16,7 @@ import {
 } from 'react'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import { Group } from 'three'
+import { usePause } from '../store/GameStore'
 
 interface ArmsRef {
   switchAnimation: (toMagic: boolean) => void
@@ -26,6 +27,7 @@ interface ArmsProps {
 }
 
 export const Arms = forwardRef<ArmsRef, ArmsProps>((props, ref) => {
+  const pause = usePause()
   const group = useRef<Group>(null)
 
   const gltf = useGLTF(
@@ -40,7 +42,6 @@ export const Arms = forwardRef<ArmsRef, ArmsProps>((props, ref) => {
       const magicSpellAction = actions['arms_armature|Magic_spell_loop']
 
       if (!idleAction || !magicSpellAction) {
-        console.error('Required animations are missing.')
         return
       }
 
@@ -55,6 +56,24 @@ export const Arms = forwardRef<ArmsRef, ArmsProps>((props, ref) => {
     [actions]
   )
 
+  useEffect(() => {
+    const idleAction = actions['arms_armature|Relax_hands_idle_loop']
+    const magicSpellAction = actions['arms_armature|Magic_spell_loop']
+
+    if (pause) {
+      if (idleAction?.isRunning()) {
+        idleAction.stop()
+        idleAction.reset()
+      }
+      if (magicSpellAction?.isRunning()) {
+        magicSpellAction.stop()
+        magicSpellAction.reset()
+      }
+    } else {
+      idleAction?.reset().fadeIn(0.1).play()
+    }
+  }, [pause, actions])
+
   useImperativeHandle(
     ref,
     () => ({
@@ -62,13 +81,6 @@ export const Arms = forwardRef<ArmsRef, ArmsProps>((props, ref) => {
     }),
     [switchAnimation]
   )
-
-  useEffect(() => {
-    const idleAction = actions['arms_armature|Relax_hands_idle_loop']
-    if (idleAction) {
-      idleAction.play()
-    }
-  }, [actions])
 
   return (
     <group ref={group} {...props} dispose={null}>
