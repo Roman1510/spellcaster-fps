@@ -9,7 +9,7 @@ import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { Suspense, useMemo, useEffect } from 'react'
 import { usePause } from '../store/GameStore'
 import { useInitializeTowers } from '../store/TowerStore'
-// import { PositionDebugLine } from './PositionDebugLine'
+
 
 export const Stage = () => {
   const pause = usePause()
@@ -44,8 +44,6 @@ export const Stage = () => {
           <Ground />
           <Tower wallPositions={towerPositions} />
         </Suspense>
-        {/* <PositionDebugLine name="Wall Position Debug" /> */}
-
         <ProjectileSystem />
       </Physics>
       <EffectComposer>

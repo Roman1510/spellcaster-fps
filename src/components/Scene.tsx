@@ -18,16 +18,14 @@ export function Scene({ canvasRef }: ISceneProps) {
     <>
       <>
         <Suspense fallback={null}>
-          {/* <KeyboardControls map={keyboardControls}> */}
           <Stage key="main-stage" />
-          {/* </KeyboardControls> */}
         </Suspense>
       </>
 
       {!pause && (
         <PointerLockControls
           domElement={canvasRef.current!}
-          onLock={() => {}}
+          onLock={() => { }}
           onUnlock={() => {
             setPause(true)
           }}

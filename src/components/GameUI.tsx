@@ -20,7 +20,6 @@ import {
 } from '../store/GameStore'
 import { useStartTimer, useStopTimer, useResetTimer } from '../store/TimeStore'
 import Win from './Win'
-// import TowerStatusUI from './TowerStatus'
 
 interface GameUIProps {
   onStart: () => void
@@ -90,7 +89,7 @@ export function GameUI({
     selectedOption,
     setSelectedOption,
     menuOptions,
-    onHover: () => {},
+    onHover: () => { },
   })
 
   useEffect(() => {
@@ -100,7 +99,6 @@ export function GameUI({
   if (!pause) {
     return (
       <>
-        {/* <TowerStatusUI /> */}
         <Win />
         <EnergyUI />
         <GameTimer />
