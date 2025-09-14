@@ -17,7 +17,7 @@ export function usePhysicalKeyboard() {
     }
 
     const handleBlur = () => {
-      setKeys({}) // Clear all keys when window loses focus
+      setKeys({})
     }
 
     window.addEventListener('keydown', handleKeyDown)

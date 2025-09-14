@@ -29,7 +29,7 @@ export const usePlayerControl = (
   ref: RefObject<RapierRigidBody | null>,
   targetRef: RefObject<Mesh | null>,
   armsRef: RefObject<Group | null>,
-  keys: { [key: string]: boolean } // Add keys parameter
+  keys: { [key: string]: boolean }
 ) => {
   const hasSetInitialRotation = useRef(false)
 
