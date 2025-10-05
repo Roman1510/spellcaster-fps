@@ -116,7 +116,6 @@ export function GameUI({
             selectedOption={selectedOption}
             onSelect={setSelectedOption}
           />
-
           <MenuInstructions hasStarted={hasStarted} />
           <MenuGoals />
           <MenuStatusIndicator show={!hasStarted} />
